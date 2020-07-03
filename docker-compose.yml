@@ -15,8 +15,12 @@ services:
   prezoo_client:
     container_name: "prezoo_client"
     build: ./client/
+    restart: always
+    tty: true
+    volumes:
+      - ./client:/app # this will enable changes made to the server JS to reflect in the container
     ports:
-      - "4200:4200"
+      - "3000:3000"
 
   prezoo_db:
     image: "postgres:latest"
