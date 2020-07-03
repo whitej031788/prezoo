@@ -1,0 +1,44 @@
+version: "3.5"
+
+services:
+  prezoo_server:
+    container_name: "prezoo_server"
+    volumes:
+    - ./server:/app # this will enable changes made to the server JS to reflect in the container
+    build: ./server/
+    restart: always
+    ports:
+      - "3001:3001"
+    networks:
+      - local_network
+
+  prezoo_client:
+    container_name: "prezoo_client"
+    build: ./client/
+    ports:
+      - "4200:4200"
+
+  prezoo_db:
+    image: "postgres:latest"
+    restart: always
+    container_name: "prezoo_db"
+    environment:
+      POSTGRES_DB: "prezoo"
+      POSTGRES_USER: "prezoo_user"
+      POSTGRES_PASSWORD: "WMn2adK6fjHp48Pf8Q"
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - local_network
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
+
+#Docker Networks
+networks:
+  local_network:
+    driver: bridge
