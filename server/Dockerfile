@@ -1,6 +1,10 @@
 # Create image based on the official Node 6 image from the dockerhub
 FROM node:12
 
+# Download image tools
+RUN apt-get update \
+  && apt-get install -yq poppler-utils ghostscript imagemagick
+
 # Create a directory where our app will be placed
 RUN mkdir -p /app
 
