@@ -32,7 +32,8 @@ require('./routes')(app);
 const PORT = 3001;
 
 app.listen(PORT, () => {
-  model.sequelize.drop();
+  // Uncomment the below to drop / add all tables ORM models to your local DB
+  //model.sequelize.drop();
   model.sequelize.sync();
 });
 

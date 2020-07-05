@@ -29,8 +29,10 @@ fs
   });
 
 Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+  if (db[modelName].relations) {
+    db[modelName].relations.forEach(rel => {
+      db[modelName][rel.type](db[rel.model], rel.opts);
+    });
   }
 });
 
