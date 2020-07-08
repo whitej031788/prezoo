@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Slide = sequelize.define('Slide', {
-    project_id: {
+    projectId: {
       type: DataTypes.INTEGER,
       references: {
         // This is a reference to another model
@@ -16,7 +16,10 @@ module.exports = (sequelize, DataTypes) => {
     order: {
       type: DataTypes.INTEGER
     },
-    file_path: {
+    filePath: {
+      type: DataTypes.STRING
+    },
+    fileName: {
       type: DataTypes.STRING
     }
   }, {
@@ -25,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Define all related models and how that model is related (type)
   Slide.relations = [
-    {model: 'Project', type: 'belongsTo'}
+    {model: 'Project', type: 'belongsTo', opts: {foreignKey: 'projectId'}}
   ];
 
   return Slide;

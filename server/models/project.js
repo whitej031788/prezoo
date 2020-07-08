@@ -4,28 +4,32 @@ const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Project = sequelize.define('Project', {
-    original_file_name: {
+    originalFileName: {
       type: DataTypes.STRING
     },
-    uploaded_file_name: {
+    uploadedFileName: {
       type: DataTypes.STRING
     },
-    file_path: {
+    filePath: {
       type: DataTypes.STRING
     },
-    project_name: {
+    projectName: {
       type: DataTypes.STRING,
       allowNull: true
     },
-    owner_email: {
+    ownerName: {
       type: DataTypes.STRING,
       allowNull: true
     },
-    project_guid: {
+    ownerEmail: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    projectGuid: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
-    collab_code: {
+    collabCode: {
       type: DataTypes.STRING
     }
   }, {
@@ -34,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Define all related models and how that model is related (type), and optional opts
   Project.relations = [
-    {model: 'Slide', type: 'hasMany', opts: {foreignKey: 'project_id'}}
+    {model: 'Slide', type: 'hasMany', opts: {foreignKey: 'projectId'}}
   ];
 
   return Project;

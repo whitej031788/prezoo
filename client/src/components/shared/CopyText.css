@@ -1,0 +1,10 @@
+.copyText {
+  display: inline-block;
+  font-size: 13px;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  padding: 3px;
+  width: 60px;
+  margin-left: 5px;
+}

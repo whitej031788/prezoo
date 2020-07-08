@@ -1,42 +1,41 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Switch, Route, Link, RouteComponentProps } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, RouteComponentProps  } from "react-router-dom";
 
 import { Navbar, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import PrezooHome from "./components/Home";
+import Home from "./components/Home";
 import PreUpload from "./components/PreUpload";
+import PrePreview from "./components/PrePreview";
 
 interface MatchParams {
   guid: string;
 }
 
-interface MatchProps extends RouteComponentProps<MatchParams> {
+interface ChildComponentProps extends RouteComponentProps<MatchParams> {
 }
 
 class App extends Component {
   render() {
   return (
     <Router>
-      <div>
-        <Navbar bg="light" expand="lg">
-          <Link to="/">Prezoo <img src="/images/leaf-logo.png" className="brand-logo" /></Link>
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              <Link to="/more">More</Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
-
-        <Switch>
-          <Route exact path="/">
-            <PrezooHome />
-          </Route>
-          <Route path="/pre-prezoo/upload/:guid" render={( {match}: MatchProps) => (
-            <PreUpload guid={match.params.guid} /> )} 
-          />
-        </Switch>
-      </div>
+      <Navbar bg="light" expand="lg">
+        <Link to="/">Prezoo <img src="/images/leaf-logo.png" alt="Prezoo" className="brand-logo" /></Link>
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="ml-auto">
+            <Link to="/more">More</Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/pre-prezoo/upload/:guid" render={( {match}: ChildComponentProps) => (
+          <PreUpload guid={match.params.guid} /> )} />
+        <Route exact path="/pre-prezoo/preview/:guid" render={( {match}: ChildComponentProps) => (
+          <PrePreview guid={match.params.guid} /> )} />
+        <Route exact path="/prezoo-live/:guid" render={( {match}: ChildComponentProps) => (
+          <PrePreview guid={match.params.guid} /> )} />
+      </Switch>
     </Router>
   );
   }

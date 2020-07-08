@@ -2,12 +2,13 @@
 
 const multer = require('multer');
 const model = require('../models');
-const db = require('../models');
 const PDFImage = require('pdf-image').PDFImage;
+const env = process.env.NODE_ENV;
+const storageConfig = require(__dirname + '/../config/storage.json')[env];
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public')
+    cb(null, storageConfig.publicStoragePath)
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname)
@@ -17,7 +18,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('file');
 
 const ProjectController = () => {
-
   const projectUpload = async (req, res, next) => {
     upload(req, res, function (err) {
       if (err instanceof multer.MulterError) {
@@ -30,29 +30,34 @@ const ProjectController = () => {
       var pdfImage = new PDFImage(req.file.path);
       pdfImage.convertFile().then(async function (imagePaths) {
         try {
+          console.log(imagePaths);
           // If we got here, we have created the PDF file on disk and created a PNG file
           // for every page of the PDF. Now let's create our models and save to DB before sending success
-          console.log(model.Project);
           const project = await model.Project.create({
-            original_file_name: req.file.originalname,
-            uploaded_file_name: req.file.filename,
-            file_path: req.file.path,
-            collab_code: generateCollabCode(8)
+            originalFileName: req.file.originalname,
+            uploadedFileName: req.file.filename,
+            filePath: req.file.path,
+            collabCode: generateCollabCode(8)
           });
 
           imagePaths.forEach(async function (value, i) {
+            // The pdfImage library returns the full disk path of the new slides
+            // As the public_path column is meant for the frontend to serve the image
+            // remove the local disk part and store file name
+            let filePath = value.replace(storageConfig.publicStoragePath, '');
             await model.Slide.create({
-              project_id: project.id,
+              projectId: project.id,
               order: i + 1,
-              file_path: value
+              filePath: value,
+              fileName: filePath
             });
           });
 
           let retObj = {
             success: true,
             projectId: project.id,
-            collabCode: project.collab_code,
-            projectGuid: project.project_guid
+            collabCode: project.collabCode,
+            projectGuid: project.projectGuid
           }
 
           return res.status(200).send(retObj);
@@ -70,14 +75,25 @@ const ProjectController = () => {
   const getProjectAndSlides = async (req, res, next) => {
     const project = await model.Project.findOne({
       where: {
-        project_guid: req.params.projectGuid,
+        projectGuid: req.params.projectGuid,
       },
-      include: { model: db.Slide }
+      include: { model: model.Slide }
     });
     return res.status(200).send(project);
   }
 
-  const generateCollabCode = (length) => {
+  const updateProject = async (req, res, next) => {
+    const project = await model.Project.findOne({ where: { id: parseInt(req.params.projectId) }});
+
+    if (project) {
+      await project.update(req.body);
+      return res.status(200).send(project);
+    } else {
+      return res.status(500).send("Cannot find project");
+    }
+  }
+
+  function generateCollabCode(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
@@ -89,7 +105,8 @@ const ProjectController = () => {
 
   return {
     projectUpload,
-    getProjectAndSlides
+    getProjectAndSlides,
+    updateProject
   };
 };
 
