@@ -1,4 +1,13 @@
 import { combineReducers } from 'redux';
 
-export const rootReducer = () =>
-  combineReducers({})
+import user from './userReducer';
+import userList from './userListReducer';
+import chat from './chatReducer';
+import project from './projectReducer';
+
+export default combineReducers({
+  user,
+  userList,
+  chat,
+  project
+});

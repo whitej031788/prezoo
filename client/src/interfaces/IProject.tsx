@@ -1,4 +1,4 @@
-import {ISlide} from './ISlide';
+import { ISlide } from './ISlide';
 
 export interface IProject {
   id: Number,

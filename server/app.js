@@ -1,7 +1,7 @@
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const socketIo = require('socket.io');
 
 const app = express();
 
@@ -33,33 +33,69 @@ require('./routes')(app);
 
 const PORT = 3001;
 
-// Socket IO testing
-const io = socketIo(server);
-
-let interval;
-
-io.on("connection", (socket) => {
-  console.log("New client connected");
-  if (interval) {
-    clearInterval(interval);
-  }
-  interval = setInterval(() => getApiAndEmit(socket), 1000);
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-    clearInterval(interval);
-  });
-});
-
-const getApiAndEmit = socket => {
-  const response = new Date();
-  // Emitting a new message. Will be consumed by the client
-  socket.emit("FromAPI", response);
-};
-
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   // Uncomment the below to drop / add all tables ORM models to your local DB
   //model.sequelize.drop();
   model.sequelize.sync();
+});
+
+const io = socketIo(server);
+
+var usersList = [];
+
+function updateUserlist(action, sender) {
+  // add user to userlist
+  if (action === 'join') {
+    usersList.push({
+      userName: sender
+    });
+  }
+
+  // remove user from userlist
+  else if (action === 'leave') {
+    usersList.map((user, index) => {
+      if (user.userName === sender) {
+        usersList.splice(index, 1);
+      }
+    });
+  }
+}
+
+io.on("connection", (socket) => {
+  // join
+  socket.on('chatJoin', function (msg) {
+    // add user to userlist
+    updateUserlist('join', msg.sender);
+
+    // send userlist
+    io.emit('chatUsers', usersList);
+
+    // send join message
+    io.emit('chatJoin', msg);
+  });
+
+  // leave
+  socket.on('chatLeave', function (msg) {
+    // remove user from userlist
+    updateUserlist('leave', msg.sender);
+
+    // send userlist
+    io.emit('chatUsers', usersList);
+
+    // send leave message
+    io.emit('chatLeave', msg);
+  });
+
+  // message
+  socket.on('chatMessage', function (msg) {
+    // send message
+    io.emit('chatMessage', msg);
+  });
+
+  // slide change
+  socket.on('changeSlide', function (msg) {
+    io.emit('changeSlide', msg);
+  });
 });
 
 module.exports = app;

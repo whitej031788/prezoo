@@ -1,24 +1,24 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import './PrePreview.css';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import './LiveCollab.css';
 import axios from 'axios';
 import { IProject } from '../interfaces/IProject';
 import SlideShow from './shared/SlideShow';
 import CopyText from './shared/CopyText';
+import ChatArea from './chat/ChatArea';
 
 // TypeScript, define the properties and state we expect passed to this component
-interface IPrePreviewProps {
+interface ILiveCollabProps {
   guid: string
 };
 
-interface IPrePreviewState {
+interface ILiveCollabState {
   isLoaded: Boolean,
   project?: IProject
 };
 
-class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
-  constructor(props: IPrePreviewProps) {
+class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
+  constructor(props: ILiveCollabProps) {
     super(props);
     this.state = { 
       isLoaded: false,
@@ -41,7 +41,6 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
 
   render() {
     let shareLinkAttend = process.env.REACT_APP_BASE_URL + '/prezoo-live/' + this.props.guid;
-    let goLiveLink = '/prezoo-live/collaborator/' + this.props.guid;
 
     return (
       <div className="component-root">
@@ -50,22 +49,17 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
           <Row>
             <Col md="8" className="text-center">
               <SlideShow project={this.state.project} />
-            </Col>
-            <Col md="4">
-              <p>Host: {this.state.project.ownerName}</p>
-              <div>Share Link with attendee's:                   
-                <a className="ml-1" onClick={(e) => e.preventDefault()} href={shareLinkAttend}>Link</a>
-                  <CopyText theText={shareLinkAttend} />
-              </div>
-              <Col md="12" className="mt-5">
-                <Link to={goLiveLink}><Button><div>Ready to present?</div><div>Collab center will open automatically</div></Button></Link>
+              <Col md="12">
+                  NOTES SECTION
               </Col>
             </Col>
-            <Col md="12">
-              <b>Next</b>
-            </Col>
-            <Col md="12">
-              <p>Share your link with attendee's or once you begin presenting. Open your slides to full screen and share that over your video hosting platform</p>
+            <Col md="4">
+              <Col md="12">
+                Timer, links, collaborators, attendees
+              </Col>
+              <Col md="12">
+                <ChatArea />
+              </Col>
             </Col>
           </Row>
           )}
@@ -75,4 +69,4 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
   }
 }
 
-export default PrePreview;
+export default LiveCollab;
