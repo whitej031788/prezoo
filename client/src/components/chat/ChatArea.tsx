@@ -4,7 +4,8 @@ import AddUser from './AddUser';
 import Chat from './Chat';
 
 interface IChatAreaProps {
-  user?: any
+  user?: any,
+  projectGuid: string
 };
 
 interface IChatAreaState {
@@ -12,11 +13,15 @@ interface IChatAreaState {
 };
 
 class ChatArea extends Component<IChatAreaProps, IChatAreaState> {
+  constructor(props: IChatAreaProps) {
+    super(props);
+  }
+
   render() {
     const username = this.props.user.userName;
 
     const addUser = !username ? <AddUser /> : null;
-    const chat = username ? <Chat /> : null;
+    const chat = username ? <Chat projectGuid={this.props.projectGuid} /> : null;
 
     return (
       <div>

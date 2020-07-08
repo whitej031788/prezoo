@@ -47,18 +47,18 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
         <Container>
           {this.state.project && (
           <Row>
-            <Col md="8" className="text-center">
+            <Col md="7" className="text-center">
               <SlideShow project={this.state.project} />
-              <Col md="12">
+              <Col md="12" className="prezooBorder">
                   NOTES SECTION
               </Col>
             </Col>
-            <Col md="4">
+            <Col md="5">
               <Col md="12">
                 Timer, links, collaborators, attendees
               </Col>
               <Col md="12" className="prezooBorder">
-                <ChatArea />
+                <ChatArea projectGuid={this.props.guid} />
               </Col>
             </Col>
           </Row>

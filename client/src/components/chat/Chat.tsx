@@ -10,13 +10,12 @@ import { IChat } from '../../interfaces/IChat';
 import { IUserList } from '../../interfaces/IUserList';
 import { Button, Form } from 'react-bootstrap';
 
-const socket = io(process.env.REACT_APP_WS_URL as string);
-
 interface IChatProps {
   dispatch: any,
   user: any,
   userList: IUserList,
-  chat: IChat
+  chat: IChat,
+  projectGuid: string
 };
 
 interface IChatState {
@@ -37,6 +36,8 @@ class Chat extends Component<IChatProps, IChatState> {
     };
   }
 
+  socketIO = io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.projectGuid) as string);
+
   componentDidMount() {
     this.socket();
   }
@@ -45,27 +46,27 @@ class Chat extends Component<IChatProps, IChatState> {
     const username = this.props.user.userName;
 
     // receive userlist
-    socket.on('chatUsers', (msg: any) => {
+    this.socketIO.on('chatUsers', (msg: any) => {
       this.props.dispatch(receiveUserList(msg));
     });
 
     // send join message
-    socket.emit('chatJoin', { timestamp: new Date(), sender: username, message: 'joined' });
+    this.socketIO.emit('chatJoin', { timestamp: new Date(), sender: username, message: 'joined' });
 
     // receive join message
-    socket.on('chatJoin', (msg: any) => {
+    this.socketIO.on('chatJoin', (msg: any) => {
       console.log(msg);
       this.props.dispatch(receiveMessage(msg));
     });
 
     // receive leave message
-    socket.on('chatLeave', (msg: any) => {
+    this.socketIO.on('chatLeave', (msg: any) => {
       console.log(msg);
       this.props.dispatch(receiveMessage(msg));
     });
 
     // receive message
-    socket.on('chatMessage', (msg: any) => {
+    this.socketIO.on('chatMessage', (msg: any) => {
       console.log(msg);
       this.props.dispatch(receiveMessage(msg));
     });
@@ -74,7 +75,7 @@ class Chat extends Component<IChatProps, IChatState> {
     window.addEventListener('beforeunload', (ev) => {
       ev.preventDefault();
 
-      socket.emit('chatLeave', { timestamp: new Date(), sender: username, message: 'left' });
+      this.socketIO.emit('chatLeave', { timestamp: new Date(), sender: username, message: 'left' });
     });
   }
 
@@ -92,7 +93,7 @@ class Chat extends Component<IChatProps, IChatState> {
     const username = this.props.user.userName;
 
     // send message
-    socket.emit('chatMessage', { timestamp: new Date(), sender: username, message: this.state.message });
+    this.socketIO.emit('chatMessage', { timestamp: new Date(), sender: username, message: this.state.message });
 
     this.setState({
       message: ''
@@ -107,7 +108,8 @@ class Chat extends Component<IChatProps, IChatState> {
         <Messages messages={chat.messages} />
 
         <Form onSubmit={(event: React.FormEvent) => this.handleClick(event)}>
-          <Form.Control as="textarea" rows={3} style={styles.input}
+          <Form.Control style={styles.input}
+            type='text'
             name='message'
             value={this.state.message}
             onChange={this.handleChange.bind(this)}

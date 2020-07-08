@@ -10,4 +10,5 @@ html, body, #root {
 .prezooBorder {
   border-radius: 5px;
   border: 1px solid #585858;
+  margin-top: 15px;
 }

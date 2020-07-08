@@ -41,60 +41,68 @@ const server = app.listen(PORT, () => {
 
 const io = socketIo(server);
 
-var usersList = [];
+let usersList = {};
 
-function updateUserlist(action, sender) {
+// Need a better way to do this than just in the JS memory
+// We are keeping a running tally by room of attendants; maybe firebase? Mongo? Redis?
+function updateUserlist(action, sender, room) {
+  if (!(room in usersList)) {
+    usersList[room] = [];
+  }
+
   // add user to userlist
   if (action === 'join') {
-    usersList.push({
+    usersList[room].push({
       userName: sender
     });
   }
 
   // remove user from userlist
   else if (action === 'leave') {
-    usersList.map((user, index) => {
+    usersList[room].map((user, index) => {
       if (user.userName === sender) {
-        usersList.splice(index, 1);
+        usersList[room].splice(index, 1);
       }
     });
   }
 }
 
 io.on("connection", (socket) => {
+  // Only join the socket to the GUID room for the presentation, so they don't get all emits
+  socket.join("room-" + socket.handshake.query.projectGuid);
   // join
   socket.on('chatJoin', function (msg) {
     // add user to userlist
-    updateUserlist('join', msg.sender);
+    updateUserlist('join', msg.sender, socket.handshake.query.projectGuid);
 
     // send userlist
-    io.emit('chatUsers', usersList);
+    io.sockets.in("room-" + socket.handshake.query.projectGuid).emit('chatUsers', usersList[socket.handshake.query.projectGuid]);
 
     // send join message
-    io.emit('chatJoin', msg);
+    io.sockets.in("room-" + socket.handshake.query.projectGuid).emit('chatJoin', msg);
   });
 
   // leave
   socket.on('chatLeave', function (msg) {
     // remove user from userlist
-    updateUserlist('leave', msg.sender);
+    updateUserlist('leave', msg.sender, socket.handshake.query.projectGuid);
 
     // send userlist
-    io.emit('chatUsers', usersList);
+    io.sockets.in("room-" + socket.handshake.query.projectGuid).emit('chatUsers', usersList[socket.handshake.query.projectGuid]);
 
     // send leave message
-    io.emit('chatLeave', msg);
+    io.sockets.in("room-" + socket.handshake.query.projectGuid).emit('chatLeave', msg);
   });
 
   // message
   socket.on('chatMessage', function (msg) {
     // send message
-    io.emit('chatMessage', msg);
+    io.sockets.in("room-" + socket.handshake.query.projectGuid).emit('chatMessage', msg);
   });
 
   // slide change
   socket.on('changeSlide', function (msg) {
-    io.emit('changeSlide', msg);
+    io.sockets.in("room-" + socket.handshake.query.projectGuid).emit('changeSlide', msg);
   });
 });
 
