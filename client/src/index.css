@@ -6,3 +6,8 @@ html, body, #root {
   height: 25px;
   padding-right: 5px;
 }
+
+.prezooBorder {
+  border-radius: 5px;
+  border: 1px solid #585858;
+}

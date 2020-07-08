@@ -1,7 +1,5 @@
 export default {
   container: {
-    backgroundColor: '#222222',
-    width: '20%',
     top: 0,
     right: 0,
     bottom: 0,
@@ -9,24 +7,27 @@ export default {
     padding: 0
   },
   title: {
-    color: 'white',
+    color: 'black',
     margin: 0,
-    padding: 10
+    padding: 10,
+    fontWeight: 900,
+    textDecoration: 'underline'
   },
   ul: {
     listStyleType: 'none',
     margin: 0,
-    padding: 10
+    padding: '0px 0px 10px 10px'
   },
   li: {
-    color: 'white',
+    color: 'black',
     margin: 0,
     padding: 0
   },
   online: {
+    overflow: 'hidden',
     display: 'inline-block',
     color: 'green',
-    fontSize: 60,
-    margin: '-48.89px 0px 0px 0px'
+    lineHeight: '15px',
+    paddingRight: '10px'
   }
 };

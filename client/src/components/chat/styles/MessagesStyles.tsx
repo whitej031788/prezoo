@@ -1,26 +1,23 @@
 export default {
   ul: {
-    width: '80%',
+    width: '100%',
     listStyleType: 'none',
-    margin: '0px 0px 60px 0px',
-    padding: 10
+    margin: '0px 0px 20px 0px',
+    padding: 5
   },
   li: {
-    backgroundColor: '#404040',
-    boxShadow: '0 1px 2px 1px rgba(0,0,0,.1)',
     color: 'white',
     margin: '10px 0px 0px 0px',
-    padding: 10
+    padding: 5
   },
   timestampText: {
     color: '#bfbfbf',
-    fontSize: 12,
+    fontSize: 8,
     margin: 0,
     padding: 0
   },
   messageText: {
-    color: 'white',
-    fontSize: 20,
+    color: 'black',
     margin: 0,
     padding: 0
   }

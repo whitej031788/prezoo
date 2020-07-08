@@ -41,7 +41,7 @@ class AddUser extends Component<IAddUserProps, IAddUserState> {
           <input style={styles.input}
             name='userName'
             type='text'
-            placeholder='Pick a username'
+            placeholder='Who are you?'
             value={this.state.userName}
             onChange={this.handleChange.bind(this)}
             autoFocus />
@@ -49,7 +49,7 @@ class AddUser extends Component<IAddUserProps, IAddUserState> {
           <button style={styles.button}
             type='submit'
             className='btn btn-primary'>
-            Join chat
+            Join presentation
           </button>
         </form>
       );

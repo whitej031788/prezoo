@@ -13,9 +13,9 @@ class UserList extends Component<IMessagesProps, IMessagesState> {
 
     const users = userList.map((user: any, key: any) =>
       <li style={styles.li} key={key}>
-        <p style={styles.online}>
-            .
-        </p>
+        <span style={styles.online}>
+          &#x25cf;
+        </span>
 
         {user.userName}
       </li>
@@ -24,7 +24,7 @@ class UserList extends Component<IMessagesProps, IMessagesState> {
       return (
         <div style={styles.container}>
           <p style={styles.title}>
-            Users in chat
+            People in presentation
           </p>
 
           <ul style={styles.ul}>

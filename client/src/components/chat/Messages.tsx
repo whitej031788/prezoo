@@ -25,7 +25,7 @@ class Messages extends Component<IMessagesProps,IMessagesState > {
         </p>
 
         <p style={styles.messageText}>
-          {chat.sender}: {chat.message}
+          <b>{chat.sender}</b>: {chat.message}
         </p>
       </li>
     );

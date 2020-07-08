@@ -1,8 +1,8 @@
 export default {
   form: {
-    width: 340,
+    width: '100%',
     margin: '0 auto',
-    padding: '300px 0px 0px 0px'
+    padding: '10px'
   },
   title: {
     color: 'white',

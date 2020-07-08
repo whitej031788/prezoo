@@ -8,6 +8,7 @@ import UserList from './UserList';
 import Messages from './Messages';
 import { IChat } from '../../interfaces/IChat';
 import { IUserList } from '../../interfaces/IUserList';
+import { Button, Form } from 'react-bootstrap';
 
 const socket = io(process.env.REACT_APP_WS_URL as string);
 
@@ -94,7 +95,7 @@ class Chat extends Component<IChatProps, IChatState> {
     socket.emit('chatMessage', { timestamp: new Date(), sender: username, message: this.state.message });
 
     this.setState({
-      message: undefined
+      message: ''
     });
   }
 
@@ -103,27 +104,19 @@ class Chat extends Component<IChatProps, IChatState> {
 
     return (
       <div>
-        <h1 style={styles.title}>
-          Socket.IO Chat
-        </h1>
-
         <Messages messages={chat.messages} />
 
-        <form onSubmit={(event) => this.handleClick(event)}>
-          <input style={styles.input}
+        <Form onSubmit={(event: React.FormEvent) => this.handleClick(event)}>
+          <Form.Control as="textarea" rows={3} style={styles.input}
             name='message'
-            type='text'
-            placeholder='Write something'
             value={this.state.message}
             onChange={this.handleChange.bind(this)}
             autoFocus />
 
-          <button style={styles.button}
-            type='submit'
-            className='btn btn-default'>
+          <Button type='submit' className="mt-2">
             Send
-          </button>
-        </form>
+          </Button>
+        </Form>
 
         <UserList userList={userList.userList} />
       </div>

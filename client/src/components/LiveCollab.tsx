@@ -43,7 +43,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
     let shareLinkAttend = process.env.REACT_APP_BASE_URL + '/prezoo-live/' + this.props.guid;
 
     return (
-      <div className="component-root">
+      <div className="component-root mt-3">
         <Container>
           {this.state.project && (
           <Row>
@@ -57,7 +57,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
               <Col md="12">
                 Timer, links, collaborators, attendees
               </Col>
-              <Col md="12">
+              <Col md="12" className="prezooBorder">
                 <ChatArea />
               </Col>
             </Col>
