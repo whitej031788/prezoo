@@ -29,7 +29,7 @@ export default class LoadingLeaf extends Component<ISlideShowProps, ISlideShowSt
         );
       });
 
-      el = (<Carousel>{presentationSlides}</Carousel>)
+      el = (<Carousel data-interval="false">{presentationSlides}</Carousel>)
     }
     
     return el;
