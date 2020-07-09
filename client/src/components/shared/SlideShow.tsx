@@ -8,7 +8,8 @@ import { IProject } from '../../interfaces/IProject';
 interface ISlideShowProps {
   project?: IProject,
   slideNumber: number,
-  showControls: boolean
+  showControls: boolean,
+  onSlideSelect?: Function
 };
 
 interface ISlideShowState {
@@ -16,6 +17,18 @@ interface ISlideShowState {
 };
 
 class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
+  constructor(props: ISlideShowProps) {
+    super(props);
+
+    this.onSlideSelect = this.onSlideSelect.bind(this);
+  }
+
+  onSlideSelect(index: number) {
+    if (this.props.onSlideSelect) {
+      this.props.onSlideSelect(index);
+    }
+  }
+
   render() {
     let el = null;
     
@@ -32,7 +45,7 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
 
       el = (
         <div className="carouselWrapper">
-          <Carousel controls={this.props.showControls} slide={false} interval={null} activeIndex={this.props.slideNumber}>
+          <Carousel onSelect={this.onSlideSelect} controls={this.props.showControls} slide={false} interval={null} activeIndex={this.props.slideNumber}>
             {presentationSlides}
           </Carousel>
         </div>)

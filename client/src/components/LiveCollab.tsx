@@ -34,10 +34,17 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
 
     this.countUp = this.countUp.bind(this);
     this.startCounting = this.startCounting.bind(this);
+    this.onSlideSelect = this.onSlideSelect.bind(this);
   }
 
   componentWillMount() {
     this.getSlides();
+  }
+
+  
+  onSlideSelect(index: number) {
+    this.setState({slideNumber: index + 1});
+    console.log('Changed Slide from parent');
   }
 
   getSlides() {
@@ -82,7 +89,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
           {this.state.project && (
           <Row>
             <Col md="7" className="text-center">
-              <SlideShow project={this.state.project} showControls={true} />
+              <SlideShow onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
               <Col md="12" className="prezooBorder">
                   NOTES SECTION
               </Col>

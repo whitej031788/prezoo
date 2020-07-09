@@ -55,19 +55,16 @@ class Chat extends Component<IChatProps, IChatState> {
 
     // receive join message
     this.socketIO.on('chatJoin', (msg: any) => {
-      console.log(msg);
       this.props.dispatch(receiveMessage(msg));
     });
 
     // receive leave message
     this.socketIO.on('chatLeave', (msg: any) => {
-      console.log(msg);
       this.props.dispatch(receiveMessage(msg));
     });
 
     // receive message
     this.socketIO.on('chatMessage', (msg: any) => {
-      console.log(msg);
       this.props.dispatch(receiveMessage(msg));
     });
 
