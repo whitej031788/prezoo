@@ -1,16 +1,20 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from 'react-bootstrap';
 import './LiveCollab.css';
-import { connect } from 'react-redux';
 import axios from 'axios';
+import io from 'socket.io-client';
+import { receiveProject}  from '../actions/projectActions';
 import { IProject } from '../interfaces/IProject';
 import SlideShow from './shared/SlideShow';
 import CopyText from './shared/CopyText';
 import ChatArea from './chat/ChatArea';
+import { connect } from 'react-redux';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface ILiveCollabProps {
-  guid: string
+  guid: string,
+  dispatch: any,
+  presentation: any
 };
 
 interface ILiveCollabState {
@@ -18,7 +22,8 @@ interface ILiveCollabState {
   project?: IProject,
   elapsedTime: number,
   elapsedTimeDisplay: string,
-  slideNumber: number
+  socket: SocketIOClient.Socket,
+  presentation: any
 };
 
 class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
@@ -29,7 +34,8 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
       project: undefined,
       elapsedTime: 0,
       elapsedTimeDisplay: '',
-      slideNumber: 1
+      presentation: {slideNumber: 0},
+      socket: io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.guid) as string)
     };
 
     this.countUp = this.countUp.bind(this);
@@ -39,12 +45,17 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
 
   componentWillMount() {
     this.getSlides();
+    this.socket();
   }
 
+  socket() {
+    this.state.socket.on('changeSlide', (msg: any) => {
+      this.props.dispatch(receiveProject(msg));
+    });
+  }
   
   onSlideSelect(index: number) {
-    this.setState({slideNumber: index + 1});
-    console.log('Changed Slide from parent');
+    this.state.socket.emit('changeSlide', index );
   }
 
   getSlides() {
@@ -89,7 +100,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
           {this.state.project && (
           <Row>
             <Col md="7" className="text-center">
-              <SlideShow onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
+              <SlideShow slideNumber={this.props.presentation.slideNumber} onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
               <Col md="12" className="prezooBorder">
                   NOTES SECTION
               </Col>
@@ -102,7 +113,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
                 <Col md="6">{this.state.elapsedTimeDisplay}</Col>
               </Row>
               <Col md="12" className="prezooBorder">
-                <ChatArea projectGuid={this.props.guid} />
+                <ChatArea socket={this.state.socket} projectGuid={this.props.guid} />
               </Col>
             </Col>
           </Row>
@@ -113,4 +124,8 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   }
 }
 
-export default LiveCollab;
+const mapStateToProps = (state: ILiveCollabState) => ({
+  presentation: state.presentation
+});
+
+export default connect(mapStateToProps)(LiveCollab);

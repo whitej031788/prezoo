@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from 'react-redux';
 import { receiveUserList } from '../../actions/userListActions';
 import { receiveMessage } from '../../actions/chatActions';
-import io from 'socket.io-client';
 import styles from './styles/ChatStyles';
 import UserList from './UserList';
 import Messages from './Messages';
@@ -15,7 +14,8 @@ interface IChatProps {
   user: any,
   userList: IUserList,
   chat: IChat,
-  projectGuid: string
+  projectGuid: string,
+  socket: SocketIOClient.Socket
 };
 
 interface IChatState {
@@ -36,7 +36,7 @@ class Chat extends Component<IChatProps, IChatState> {
     };
   }
 
-  socketIO = io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.projectGuid) as string);
+  
 
   componentDidMount() {
     this.socket();
@@ -46,25 +46,25 @@ class Chat extends Component<IChatProps, IChatState> {
     const username = this.props.user.userName;
 
     // receive userlist
-    this.socketIO.on('chatUsers', (msg: any) => {
+    this.props.socket.on('chatUsers', (msg: any) => {
       this.props.dispatch(receiveUserList(msg));
     });
 
     // send join message
-    this.socketIO.emit('chatJoin', { timestamp: new Date(), sender: username, message: 'joined' });
+    this.props.socket.emit('chatJoin', { timestamp: new Date(), sender: username, message: 'joined' });
 
     // receive join message
-    this.socketIO.on('chatJoin', (msg: any) => {
+    this.props.socket.on('chatJoin', (msg: any) => {
       this.props.dispatch(receiveMessage(msg));
     });
 
     // receive leave message
-    this.socketIO.on('chatLeave', (msg: any) => {
+    this.props.socket.on('chatLeave', (msg: any) => {
       this.props.dispatch(receiveMessage(msg));
     });
 
     // receive message
-    this.socketIO.on('chatMessage', (msg: any) => {
+    this.props.socket.on('chatMessage', (msg: any) => {
       this.props.dispatch(receiveMessage(msg));
     });
 
@@ -72,7 +72,7 @@ class Chat extends Component<IChatProps, IChatState> {
     window.addEventListener('beforeunload', (ev) => {
       ev.preventDefault();
 
-      this.socketIO.emit('chatLeave', { timestamp: new Date(), sender: username, message: 'left' });
+      this.props.socket.emit('chatLeave', { timestamp: new Date(), sender: username, message: 'left' });
     });
   }
 
@@ -90,7 +90,7 @@ class Chat extends Component<IChatProps, IChatState> {
     const username = this.props.user.userName;
 
     // send message
-    this.socketIO.emit('chatMessage', { timestamp: new Date(), sender: username, message: this.state.message });
+    this.props.socket.emit('chatMessage', { timestamp: new Date(), sender: username, message: this.state.message });
 
     this.setState({
       message: ''

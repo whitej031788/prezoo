@@ -1,5 +1,5 @@
 export default function reducer(state = {
-    slideNumber: 1
+    slideNumber: 0
 }, action) {
   switch (action.type) {
     case "SLIDE_CHANGE": {

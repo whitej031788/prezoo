@@ -1,20 +1,17 @@
 import React, { Component } from "react";
 import { Carousel } from 'react-bootstrap';
-import { connect } from 'react-redux';
 import './SlideShow.css';
 import { IProject } from '../../interfaces/IProject';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface ISlideShowProps {
   project?: IProject,
-  slideNumber: number,
+  slideNumber?: number,
   showControls: boolean,
   onSlideSelect?: Function
 };
 
-interface ISlideShowState {
-  slideNumber: number
-};
+interface ISlideShowState {};
 
 class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
   constructor(props: ISlideShowProps) {
@@ -55,8 +52,4 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
   }
 }
 
-const mapStateToProps = (state: ISlideShowState) => ({
-  slideNumber: state.slideNumber
-});
-
-export default connect(mapStateToProps)(SlideShow);
+export default SlideShow;

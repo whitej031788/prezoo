@@ -5,7 +5,8 @@ import Chat from './Chat';
 
 interface IChatAreaProps {
   user?: any,
-  projectGuid: string
+  projectGuid: string,
+  socket: SocketIOClient.Socket
 };
 
 interface IChatAreaState {
@@ -17,7 +18,7 @@ class ChatArea extends Component<IChatAreaProps, IChatAreaState> {
     const username = this.props.user.userName;
 
     const addUser = !username ? <AddUser /> : null;
-    const chat = username ? <Chat projectGuid={this.props.projectGuid} /> : null;
+    const chat = username ? <Chat socket={this.props.socket} projectGuid={this.props.projectGuid} /> : null;
 
     return (
       <div>
