@@ -101,11 +101,9 @@ class Chat extends Component<IChatProps, IChatState> {
   }
 
   render() {
-    const { userList, chat } = this.props;
-
     return (
       <div>
-        <Messages messages={chat.messages} />
+        <Messages messages={this.props.chat.messages} />
 
         <Form onSubmit={(event: React.FormEvent) => this.handleClick(event)}>
           <Form.Control style={styles.input}
@@ -120,7 +118,7 @@ class Chat extends Component<IChatProps, IChatState> {
           </Button>
         </Form>
 
-        <UserList userList={userList.userList} />
+        <UserList userList={this.props.userList.userList} />
       </div>
     );
   }

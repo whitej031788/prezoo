@@ -8,6 +8,9 @@ export default function reducer(state = {
         userName: action.payload
       };
     }
+    default: {
+      break;
+    }
   }
   return state;
 }

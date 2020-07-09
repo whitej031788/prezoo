@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from "react";
+import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route, Link, RouteComponentProps  } from "react-router-dom";
 
 import { Navbar, Nav } from 'react-bootstrap';
@@ -9,8 +9,6 @@ import PreUpload from "./components/PreUpload";
 import PrePreview from "./components/PrePreview";
 import LiveCollab from "./components/LiveCollab";
 
-import socketIOClient from "socket.io-client";
-const ENDPOINT = process.env.REACT_APP_WS_URL;
 
 interface MatchParams {
   guid: string;

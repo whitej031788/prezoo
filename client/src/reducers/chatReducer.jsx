@@ -10,6 +10,9 @@ switch (action.type) {
         ]
       };
     }
+    default: {
+      break;
+    }
   }
   return state;
 }

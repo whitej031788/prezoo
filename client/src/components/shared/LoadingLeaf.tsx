@@ -10,10 +10,6 @@ interface ILoadingLeafProps {
 interface ILoadingLeafState {};
 
 export default class LoadingLeaf extends Component<ILoadingLeafProps, ILoadingLeafState> {
-  constructor(props: ILoadingLeafProps) {
-    super(props);
-  }
-
   render() {
     var el = null;
     if (this.props.isLoading) {

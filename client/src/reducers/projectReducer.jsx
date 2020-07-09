@@ -8,6 +8,9 @@ export default function reducer(state = {
         slideNumber: action.payload
       };
     }
+    default: {
+      break;
+    }
   }
   return state;
 }

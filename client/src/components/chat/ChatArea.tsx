@@ -13,10 +13,6 @@ interface IChatAreaState {
 };
 
 class ChatArea extends Component<IChatAreaProps, IChatAreaState> {
-  constructor(props: IChatAreaProps) {
-    super(props);
-  }
-
   render() {
     const username = this.props.user.userName;
 

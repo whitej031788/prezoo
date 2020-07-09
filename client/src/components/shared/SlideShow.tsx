@@ -1,20 +1,21 @@
 import React, { Component } from "react";
 import { Carousel } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import './SlideShow.css';
 import { IProject } from '../../interfaces/IProject';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface ISlideShowProps {
-  project?: IProject
+  project?: IProject,
+  slideNumber: number,
+  showControls: boolean
 };
 
-interface ISlideShowState {};
+interface ISlideShowState {
+  slideNumber: number
+};
 
-export default class LoadingLeaf extends Component<ISlideShowProps, ISlideShowState> {
-  constructor(props: ISlideShowProps) {
-    super(props);
-  }
-
+class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
   render() {
     let el = null;
     
@@ -29,9 +30,20 @@ export default class LoadingLeaf extends Component<ISlideShowProps, ISlideShowSt
         );
       });
 
-      el = (<Carousel data-interval="false">{presentationSlides}</Carousel>)
+      el = (
+        <div className="carouselWrapper">
+          <Carousel controls={this.props.showControls} slide={false} interval={null} activeIndex={this.props.slideNumber}>
+            {presentationSlides}
+          </Carousel>
+        </div>)
     }
     
     return el;
   }
 }
+
+const mapStateToProps = (state: ISlideShowState) => ({
+  slideNumber: state.slideNumber
+});
+
+export default connect(mapStateToProps)(SlideShow);

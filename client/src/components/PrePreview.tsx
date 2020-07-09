@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './PrePreview.css';
 import axios from 'axios';
@@ -49,7 +49,7 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
           {this.state.project && (
           <Row>
             <Col md="8" className="text-center">
-              <SlideShow project={this.state.project} />
+              <SlideShow project={this.state.project} showControls={true} />
             </Col>
             <Col md="4">
               <p>Host: {this.state.project.ownerName}</p>
