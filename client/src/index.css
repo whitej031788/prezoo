@@ -1,9 +1,10 @@
 html, body, #root {
   height: 100%;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .brand-logo {
-  height: 25px;
+  height: 40px;
   padding-right: 5px;
 }
 
@@ -11,4 +12,56 @@ html, body, #root {
   border-radius: 5px;
   border: 1px solid #585858;
   margin-top: 15px;
+}
+
+p {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  line-height: 32px;
+}
+
+.cta-prezoo-button {
+  position: relative;
+  z-index: 10;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 15px 15px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 6px;
+  background-color: #751980;
+  box-shadow: 0 10px 20px 3px rgba(82, 104, 206, 0.15);
+  -webkit-transition: all 600ms ease;
+  transition: all 600ms ease;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.cta-prezoo-button:hover {
+  background-color: #d3a7ff;
+  -webkit-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  transform: scale(1.03);
+  color: #fff;
+}
+
+.small-text {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: 10px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  color: #929eaa;
+  font-size: 12px;
+  line-height: 17px;
 }

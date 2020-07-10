@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route, Link, RouteComponentProps  } from "react-router-dom";
 
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav  } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -22,11 +22,21 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Navbar bg="light" expand="lg">
-          <Link to="/">Prezoo <img src="/images/leaf-logo.png" alt="Prezoo" className="brand-logo" /></Link>
+        <Navbar bg="white" expand="lg">
+          <Link to="/"><img src="/images/Prezoo_free-file.png" alt="Prezoo" className="brand-logo" /></Link>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
-              <Link to="/more">More</Link>
+              <Link to="/use-cases">Use Cases</Link>
+            </Nav>
+            <Nav>
+              <Link to="/about-us">About Us</Link>
+            </Nav>
+            <Nav>
+              <Link to="/about-us">Pricing</Link>
+            </Nav>
+            <Nav>
+              <Link to="/about-us">White Label</Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>

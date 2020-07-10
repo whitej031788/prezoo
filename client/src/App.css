@@ -1,3 +1,24 @@
 .navbar {
-  height: 40px;
+  padding: 14px 10px 14px 20px;
+}
+
+.navbar-nav a {
+  display: inline-block;
+  margin-right: 10px;
+  margin-left: 10px;
+  -webkit-transition: opacity 300ms ease;
+  transition: opacity 300ms ease;
+  color: #191a1b;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+.navbar-collapse a {
+  margin-top: 10px;
+  padding: .5rem 1rem;
+}
+
+.navbar-nav a:hover {
+  opacity: 0.8;
 }

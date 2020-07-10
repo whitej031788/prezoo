@@ -55,34 +55,39 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
       <Container className="fill-home-screen" fluid>
         <Row>
           <Container className="p-5">
-            <Col md={{ span: 10, offset: 1 }}>
-              <Card className="my-5">
-                <Card.Body className="p-5">
-                  <h2 className="font-weight-light text-center">Present without the hassle</h2>
-                  <p className="lead text-center mb-5">Control your presentations remotely as a team</p>
-                  <Dropzone multiple={false} onDrop={this.onFileSelect}>
-                    {({getRootProps, getInputProps}) => (
-                      <section className="dropzone">
-                        <div {...getRootProps()}>
-                          <input {...getInputProps()} />
-                          {this.state.errorMessage && (
-                            <Col md="12" className="alert-danger mb-2 p-2">{this.state.errorMessage}</Col>
-                          )}
-                          <p>Upload your first finished project...</p>
-                          <p className="pb-0 mb-0"><img src="/images/upload.png" alt="Upload" className="brand-logo" /> or drag and drop any project</p>
-                        </div>
-                      </section>
-                    )}
-                  </Dropzone>
-                  <LoadingLeaf isLoading={this.state.isLoading} />
-                  {this.state.selectedFile && (
-                    <div className="text-center">
-                      <p>File name: <b>{this.state.selectedFile.name}</b></p>
-                      <Button onClick={this.onSubmit}>Create Project</Button>
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
+            <Col md={{span: 10, offset: 1}}>
+              <h1 className="main-title">Presentations without the hassle</h1>
+              <Col md={{span: 8, offset: 2}}>
+                <p className="text-center">Control your presentations remotely as a team with collaborator notes and chat. Presenting remotely has never been so easy.</p>
+              </Col>
+              <Dropzone multiple={false} onDrop={this.onFileSelect}>
+                {({getRootProps, getInputProps}) => (
+                  <Col md={{span: 8, offset: 2}} sm="12" className="text-center">
+                    <section className="dropzone cta-prezoo-button">
+                      <div {...getRootProps()}>
+                        <input {...getInputProps()} />
+                        {this.state.errorMessage && (
+                          <Col md="12" className="alert-danger mb-2 p-2">{this.state.errorMessage}</Col>
+                        )}
+                        <div><img src="/images/upload.png" alt="Upload" className="brand-logo" />Upload your first finished project</div>
+                      </div>
+                    </section>
+                    <div className="small-text mt-1">PDF files only</div>
+                  </Col>
+                )}
+              </Dropzone>
+              <LoadingLeaf isLoading={this.state.isLoading} />
+              {this.state.selectedFile && (
+                <div className="text-center">
+                  <p>File name: <b>{this.state.selectedFile.name}</b></p>
+                  <Button onClick={this.onSubmit}>Create Project</Button>
+                </div>
+              )}
+              <Col md="12" className="mt-4 backgroundImagePresent">
+              </Col>
+              <Col md={{span: 8, offset: 2}} className="mt-3">
+                <p className="text-center" style={{fontStyle: 'italic'}}>“We should just stop calling these things presentations altogether. Everyone gets hung up on that word. Wouldn’t it be easier to just call them conversations? That’s really what they are.”</p>
+              </Col>
             </Col>
           </Container>
         </Row>
