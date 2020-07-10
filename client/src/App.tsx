@@ -3,12 +3,13 @@ import { BrowserRouter as Router, Switch, Route, Link, RouteComponentProps  } fr
 
 import { Navbar, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 import Home from "./components/Home";
 import PreUpload from "./components/PreUpload";
 import PrePreview from "./components/PrePreview";
 import LiveCollab from "./components/LiveCollab";
-
+import Attendee from "./components/Attendee";
 
 interface MatchParams {
   guid: string;
@@ -37,6 +38,8 @@ class App extends Component {
             <PrePreview guid={match.params.guid} /> )} />
           <Route exact path="/prezoo-live/collaborator/:guid" render={( {match}: ChildComponentProps) => (
             <LiveCollab guid={match.params.guid} /> )} />
+          <Route exact path="/prezoo-live/:guid" render={( {match}: ChildComponentProps) => (
+            <Attendee guid={match.params.guid} /> )} />
         </Switch>
       </Router>
     );

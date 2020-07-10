@@ -102,7 +102,6 @@ io.on("connection", (socket) => {
 
   // slide change
   socket.on('changeSlide', function (msg) {
-    console.log('Slide Change!');
     io.sockets.in("room-" + socket.handshake.query.projectGuid).emit('changeSlide', msg);
   });
 });

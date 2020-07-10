@@ -8,7 +8,8 @@ interface ISlideShowProps {
   project?: IProject,
   slideNumber?: number,
   showControls: boolean,
-  onSlideSelect?: Function
+  onSlideSelect?: Function,
+  styles?: object
 };
 
 interface ISlideShowState {};
@@ -41,8 +42,13 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
       });
 
       el = (
-        <div className="carouselWrapper">
-          <Carousel onSelect={this.onSlideSelect} controls={this.props.showControls} slide={false} interval={null} activeIndex={this.props.slideNumber}>
+        <div className="carouselWrapper" style={this.props.styles ? this.props.styles : undefined}>
+          <Carousel 
+            onSelect={this.onSlideSelect} 
+            controls={this.props.showControls} 
+            slide={false} interval={null} 
+            activeIndex={this.props.slideNumber}
+          >
             {presentationSlides}
           </Carousel>
         </div>)
