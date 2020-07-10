@@ -52,7 +52,7 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
 
   render() {
     return (
-      <Container className="fill" fluid>
+      <Container className="fill-home-screen" fluid>
         <Row>
           <Container className="p-5">
             <Col md={{ span: 10, offset: 1 }}>
