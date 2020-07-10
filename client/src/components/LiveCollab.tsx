@@ -52,7 +52,6 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   onEditorChange(editorState: EditorState) {
     let notes = this.state.notes;
     notes[this.props.presentation.slideNumber] = editorState;
-    console.log(editorState.getCurrentContent().getPlainText('\u0001'));
     this.setState({
       notes: notes
     });
@@ -71,7 +70,6 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   
   onSlideSelect(index: number) {
     this.state.socket.emit('changeSlide', index );
-    console.log(this.state.notes);
   }
 
   getSlides() {
