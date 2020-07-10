@@ -65,3 +65,18 @@ p {
   font-size: 12px;
   line-height: 17px;
 }
+
+.btn-primary {
+  color: #fff;
+  background-color: #751980 !important;
+  border-color: #751980 !important;
+}
+
+.btn-primary:hover {
+  background-color: #d3a7ff !important;
+  border-color: #d3a7ff !important;
+  -webkit-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  transform: scale(1.03);
+  color: #fff;
+}
