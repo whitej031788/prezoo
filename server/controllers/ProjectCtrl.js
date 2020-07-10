@@ -49,7 +49,8 @@ const ProjectController = () => {
               projectId: project.id,
               order: i + 1,
               filePath: value,
-              fileName: filePath
+              fileName: filePath,
+              notes: ''
             });
           });
 

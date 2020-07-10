@@ -109,7 +109,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
           {this.state.project && (
           <Row>
             <Col md="8" className="text-center">
-              <SlideShow project={this.state.project} showControls={true} />
+              <SlideShow styles={{height: '350px'}} project={this.state.project} showControls={true} />
             </Col>
             <Col md="4">
               <Form noValidate validated={this.state.validated} onSubmit={this.submitPreview}>

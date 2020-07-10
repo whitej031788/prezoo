@@ -49,7 +49,7 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
           {this.state.project && (
           <Row>
             <Col md="8" className="text-center">
-              <SlideShow project={this.state.project} showControls={true} />
+              <SlideShow styles={{height: '350px'}} project={this.state.project} showControls={true} />
             </Col>
             <Col md="4">
               <p>Host: {this.state.project.ownerName}</p>

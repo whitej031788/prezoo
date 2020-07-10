@@ -1,6 +1,7 @@
 'use strict';
 
 const projectCtrl = require('../controllers/ProjectCtrl');
+const slideCtrl = require('../controllers/SlideCtrl');
 
 module.exports = (router) => {
   // Project Controller Routes
@@ -14,6 +15,8 @@ module.exports = (router) => {
     .put(projectCtrl().updateProject);
 
   // Slide Controller Routes
+  router.route('/slide/notes')
+    .post(slideCtrl().updateNotes);
 
   return router;
 };

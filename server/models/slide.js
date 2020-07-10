@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     fileName: {
       type: DataTypes.STRING
+    },
+    notes: {
+      type: DataTypes.STRING
     }
   }, {
     tableName: 'slides'

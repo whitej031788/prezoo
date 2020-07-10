@@ -10,7 +10,7 @@ import SlideShow from './shared/SlideShow';
 import CopyText from './shared/CopyText';
 import ChatArea from './chat/ChatArea';
 import { connect } from 'react-redux';
-import {Editor, EditorState} from 'draft-js';
+import {Editor, EditorState, ContentState } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 
 // TypeScript, define the properties and state we expect passed to this component
@@ -69,6 +69,27 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   }
   
   onSlideSelect(index: number) {
+    // We maybe want to save the notes here too
+    /*axios.post(process.env.REACT_APP_API_URL + "/slide/notes", {
+      slideId: this.state.project.Slide,
+      notes: this.state.ownerName
+    })
+    .then(res => { // then print response status
+      let slides = res.data.Slides;
+      let initNotes: {[key: number]: EditorState} = {0: EditorState.createEmpty()};
+
+      slides.forEach(function (value: ISlide, i: number) {
+        // We init the first editor, so just skip it here in case
+        if (i !== 0) {
+          initNotes[i] = EditorState.createWithContent(ContentState.createFromText('Hello'));
+        }
+      });
+
+      this.setState({project: res.data, notes: initNotes});
+      this.startCounting();
+    }).catch(err => {
+      console.log(err);
+    })*/
     this.state.socket.emit('changeSlide', index );
   }
 
@@ -81,7 +102,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
       slides.forEach(function (value: ISlide, i: number) {
         // We init the first editor, so just skip it here in case
         if (i !== 0) {
-          initNotes[i] = EditorState.createEmpty();
+          initNotes[i] = EditorState.createWithContent(ContentState.createFromText(''));
         }
       });
 
@@ -118,17 +139,13 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   render() {
     let shareLinkAttend = process.env.REACT_APP_BASE_URL + '/prezoo-live/' + this.props.guid;
 
-    let slideStyles = {
-      height: '300px'
-    };
-
     return (
       <div className="component-root mt-3">
         <Container>
           {this.state.project && (
           <Row>
             <Col md="7" className="text-center">
-              <SlideShow styles={slideStyles} slideNumber={this.props.presentation.slideNumber} onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
+              <SlideShow styles={{height: '350px'}} slideNumber={this.props.presentation.slideNumber} onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
               <Editor placeholder={'Enter your notes here'} editorState={this.state.notes[this.props.presentation.slideNumber]} onChange={this.onEditorChange} />
             </Col>
             <Col md="5">
