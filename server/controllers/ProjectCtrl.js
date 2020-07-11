@@ -20,19 +20,19 @@ const upload = multer({ storage: storage }).single('file');
 const ProjectController = () => {
   const projectUpload = async (req, res, next) => {
     console.log('Starting upload');
-    upload(req, res, function (err) {
-      if (err instanceof multer.MulterError) {
-          return res.status(500).json(err);
-      } else if (err) {
-          return res.status(500).json(err);
-      }
+    try {
+      upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json(err);
+        } else if (err) {
+            return res.status(500).json(err);
+        }
 
-      console.log('Upload complete');
+        console.log('Upload complete');
 
-      // The PDF uploaded fine, let's create the individual PNG slides
-      var pdfImage = new PDFImage(req.file.path);
-      pdfImage.convertFile().then(async function (imagePaths) {
-        try {
+        // The PDF uploaded fine, let's create the individual PNG slides
+        var pdfImage = new PDFImage(req.file.path);
+        pdfImage.convertFile().then(async function (imagePaths) {
           console.log('Images converted');
           // If we got here, we have created the PDF file on disk and created a PNG file
           // for every page of the PDF. Now let's create our models and save to DB before sending success
@@ -67,35 +67,45 @@ const ProjectController = () => {
           }
 
           return res.status(200).send(retObj);
-        } catch (err) {
+        }).catch(err => {
           console.log(err);
           return res.status(500).json(err);
-        };  
-      }).catch(err => {
-        console.log(err);
-        return res.status(500).json(err);
-      });  
-    })
+        });  
+      })
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    };
   };
 
   const getProjectAndSlides = async (req, res, next) => {
-    const project = await model.Project.findOne({
-      where: {
-        projectGuid: req.params.projectGuid,
-      },
-      include: { model: model.Slide }
-    });
-    return res.status(200).send(project);
+    try {
+      const project = await model.Project.findOne({
+        where: {
+          projectGuid: req.params.projectGuid,
+        },
+        include: { model: model.Slide }
+      });
+      return res.status(200).send(project);
+    } catch (error) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
   }
 
   const updateProject = async (req, res, next) => {
-    const project = await model.Project.findOne({ where: { id: parseInt(req.params.projectId) }});
+    try {
+      const project = await model.Project.findOne({ where: { id: parseInt(req.params.projectId) }});
 
-    if (project) {
-      await project.update(req.body);
-      return res.status(200).send(project);
-    } else {
-      return res.status(500).send("Cannot find project");
+      if (project) {
+        await project.update(req.body);
+        return res.status(200).send(project);
+      } else {
+        return res.status(500).send("Cannot find project");
+      }
+    } catch (error) {
+      console.log(err);
+      return res.status(500).json(err);
     }
   }
 
