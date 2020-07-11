@@ -8,21 +8,12 @@
     "logging": true,
     "timezone": "+00:00"
   },
-  "test": {
-    "username": "root",
-    "password": "",
-    "database": "",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
-    "logging": false,
-    "timezone": "+00:00"
-  },
   "production": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "",
-    "dialect": "mysql",
+    "username": "prezoo_user",
+    "password": "WMn2adK6fjHp48Pf8Q",
+    "database": "prezoo",
+    "host": "prezoo_db",
+    "dialect": "postgres",
     "logging": false,
     "timezone": "+00:00"
   }
