@@ -6,6 +6,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 import Home from "./components/Home";
+import UseCases from "./components/UseCases";
+import AboutUs from "./components/AboutUs";
+import Pricing from "./components/Pricing";
+import WhiteLabel from "./components/WhiteLabel";
+
 import PreUpload from "./components/PreUpload";
 import PrePreview from "./components/PrePreview";
 import LiveCollab from "./components/LiveCollab";
@@ -33,15 +38,19 @@ class App extends Component {
               <Link to="/about-us">About Us</Link>
             </Nav>
             <Nav>
-              <Link to="/about-us">Pricing</Link>
+              <Link to="/pricing">Pricing</Link>
             </Nav>
             <Nav>
-              <Link to="/about-us">White Label</Link>
+              <Link to="/white-label">White Label</Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/use-cases" component={UseCases} />
+          <Route exact path="/about-us" component={AboutUs} />
+          <Route exact path="/pricing" component={Pricing} />
+          <Route exact path="/white-label" component={WhiteLabel} />
           <Route exact path="/pre-prezoo/upload/:guid" render={( {match}: ChildComponentProps) => (
             <PreUpload guid={match.params.guid} /> )} />
           <Route exact path="/pre-prezoo/preview/:guid" render={( {match}: ChildComponentProps) => (
