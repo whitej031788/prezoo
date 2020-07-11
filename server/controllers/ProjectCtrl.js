@@ -72,9 +72,9 @@ const ProjectController = () => {
           return res.status(500).json(err);
         });  
       })
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json(err);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
     };
   };
 
@@ -88,8 +88,8 @@ const ProjectController = () => {
       });
       return res.status(200).send(project);
     } catch (error) {
-      console.log(err);
-      return res.status(500).json(err);
+      console.log(error);
+      return res.status(500).json(error);
     }
   }
 
@@ -104,8 +104,8 @@ const ProjectController = () => {
         return res.status(500).send("Cannot find project");
       }
     } catch (error) {
-      console.log(err);
-      return res.status(500).json(err);
+      console.log(error);
+      return res.status(500).json(error);
     }
   }
 
