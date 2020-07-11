@@ -3,6 +3,6 @@
     "publicStoragePath": "/app/storage/public"
   },
   "production": {
-    "publicStoragePath": "./storage/public"
+    "publicStoragePath": "/var/app/current/storage/public"
   }
 }
