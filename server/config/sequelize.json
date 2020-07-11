@@ -10,9 +10,9 @@
   },
   "production": {
     "username": "prezoo_user",
-    "password": "WMn2adK6fjHp48Pf8Q",
+    "password": "q-,Nac)&E9uk53_e",
     "database": "prezoo",
-    "host": "prezoo_db",
+    "host": "prezoo.c651ouohyogc.eu-west-2.rds.amazonaws.com",
     "dialect": "postgres",
     "logging": false,
     "timezone": "+00:00"
