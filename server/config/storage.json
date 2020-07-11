@@ -2,10 +2,7 @@
   "development": {
     "publicStoragePath": "/app/storage/public"
   },
-  "test": {
-    "publicStoragePath": ""
-  },
   "production": {
-    "publicStoragePath": ""
+    "publicStoragePath": "./storage/public"
   }
 }
