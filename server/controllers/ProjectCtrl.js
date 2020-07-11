@@ -19,6 +19,7 @@ const upload = multer({ storage: storage }).single('file');
 
 const ProjectController = () => {
   const projectUpload = async (req, res, next) => {
+    console.log('Starting upload');
     upload(req, res, function (err) {
       if (err instanceof multer.MulterError) {
           return res.status(500).json(err);
@@ -26,11 +27,13 @@ const ProjectController = () => {
           return res.status(500).json(err);
       }
 
+      console.log('Upload complete');
+
       // The PDF uploaded fine, let's create the individual PNG slides
       var pdfImage = new PDFImage(req.file.path);
       pdfImage.convertFile().then(async function (imagePaths) {
         try {
-          console.log(imagePaths);
+          console.log('Images converted');
           // If we got here, we have created the PDF file on disk and created a PNG file
           // for every page of the PDF. Now let's create our models and save to DB before sending success
           const project = await model.Project.create({
@@ -39,6 +42,8 @@ const ProjectController = () => {
             filePath: req.file.path,
             collabCode: generateCollabCode(8)
           });
+
+          console.log('Created project');
 
           imagePaths.forEach(async function (value, i) {
             // The pdfImage library returns the full disk path of the new slides
