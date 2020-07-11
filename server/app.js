@@ -5,16 +5,21 @@ const socketIo = require('socket.io');
 
 const app = express();
 
-// Read in information from your .env file
-const dotenv = require('dotenv');
-dotenv.config();
-
 let env = process.env.NODE_ENV;
 
-if (env === undefined) {
-  console.log(`NODE_ENV is ${env}`);
-  console.log('NODE_ENV not set, exiting');
-  process.exit(1);
+if (!env || env !== 'production') {
+  // Read in information from your .env file for local
+  // for production, env variables are set in the Elastic Beanstalk config
+  const dotenv = require('dotenv');
+  dotenv.config();
+
+  env = process.env.NODE_ENV;
+
+  if (env === undefined) {
+    console.log(`NODE_ENV is ${env}`);
+    console.log('NODE_ENV not set, exiting');
+    process.exit(1);
+  }
 }
 
 const storageConfig = require(__dirname + '/config/storage.json')[env];
@@ -31,7 +36,7 @@ app.use(cors());
 
 require('./routes')(app);
 
-const PORT = 3001;
+const PORT = process.env.PORT ? process.env.PORT : 3001;
 
 const server = app.listen(PORT, () => {
   // Uncomment the below to drop / add all tables ORM models to your local DB
