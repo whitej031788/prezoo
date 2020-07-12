@@ -36,7 +36,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "aws s3 sync build/ s3://prezoo.io"
+    "deploy": "aws s3 sync build/ s3://prezoo.io & aws cloudfront create-invalidation --distribution-id EK4LJNAMB2HTM --paths \"/*\""
   },
   "eslintConfig": {
     "extends": "react-app"
