@@ -51,7 +51,10 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     document.onfullscreenchange = function (event) {
       // Detect full screen and not to change styling and classes
       let fullScreenElement = document.fullscreenElement;
-      self.setState({isFullScreen: fullScreenElement ? true : false});
+      self.setState({isFullScreen: fullScreenElement ? true : false}, function() {
+        let message = self.state.isFullScreen ? 'Went full screen' : 'Exit full screen';
+        self.state.socket.emit('chatMessage', { timestamp: new Date(), sender: self.state.userName, message: message });
+      });
     }; 
   }
 
