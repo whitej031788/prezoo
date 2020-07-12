@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import './PreUpload.css';
-import axios from 'axios';
 import { IProject } from '../interfaces/IProject';
 import SlideShow from './shared/SlideShow';
 import CopyText from './shared/CopyText';
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import ButtonLoader from './shared/ButtonLoader';
+import ProjectService from '../services/projectService';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IPreUploadProps extends RouteComponentProps {
@@ -51,7 +51,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
   }
 
   getSlides() {
-    axios.get(process.env.REACT_APP_API_URL + "/project/slides/" + this.props.guid)
+    ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
       this.setState({
         project: res.data,
@@ -75,7 +75,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
       event.stopPropagation();
     } else {
       this.setState({isLoading: true});
-      axios.put(process.env.REACT_APP_API_URL + "/project/update/" + projectId, {
+      ProjectService.updateProject(projectId, {
         projectName: this.state.projectName,
         ownerName: this.state.ownerName,
         ownerEmail: this.state.ownerEmail

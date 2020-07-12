@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { Container, Row, Col } from 'react-bootstrap';
 import Dropzone from 'react-dropzone';
 import './Home.css';
-import axios from 'axios';
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import LoadingGif from './shared/LoadingGif';
+import ProjectService from '../services/projectService';
 
 // TypeScript, define the properties and state we expect passed to this component
 type IHomeProps = RouteComponentProps;
@@ -58,7 +58,8 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
     this.setState({isLoading: true});
     const blob = this.state.selectedFile as Blob;
     data.append('file', blob);
-    axios.post(process.env.REACT_APP_API_URL + "/project/upload", data)
+
+    ProjectService.projectUpload(data)
     .then(res => {
       this.setState({isLoading: false});
       let redirectUrl = "/pre-prezoo/upload/" + res.data.projectGuid;

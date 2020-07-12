@@ -66,6 +66,11 @@ class Chat extends Component<IChatProps, IChatState> {
     // receive message
     this.props.socket.on('chatMessage', (msg: any) => {
       this.props.dispatch(receiveMessage(msg));
+      // Scroll to the bottom after an add
+      var elem = document.getElementById('chat-box');
+      if (elem) {
+        elem.scrollTop = elem.scrollHeight;
+      }
     });
 
     // send leave message when user leaves the page
@@ -100,8 +105,11 @@ class Chat extends Component<IChatProps, IChatState> {
   render() {
     return (
       <div>
-        <Messages messages={this.props.chat.messages} />
-
+        <UserList userList={this.props.userList.userList} />
+        <div className="scrollable-chat-box" id="chat-box" style={styles.chatBox}>
+          <Messages messages={this.props.chat.messages} />
+        </div>
+        <div>
         <Form onSubmit={(event: React.FormEvent) => this.handleClick(event)}>
           <Form.Control style={styles.input}
             type='text'
@@ -110,13 +118,12 @@ class Chat extends Component<IChatProps, IChatState> {
             onChange={this.handleChange.bind(this)}
             autoFocus />
 
-          <Button type='submit' className="mt-2">
+          <Button type='submit' className="mt-2 mb-2">
             Send
           </Button>
         </Form>
-
-        <UserList userList={this.props.userList.userList} />
       </div>
+    </div>
     );
   }
 }

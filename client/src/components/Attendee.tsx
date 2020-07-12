@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import './Attendee.css';
-import axios from 'axios';
 import io from 'socket.io-client';
 import { receiveProject}  from '../actions/projectActions';
 import { IProject } from '../interfaces/IProject';
@@ -9,6 +8,7 @@ import SlideShow from './shared/SlideShow';
 import { connect } from 'react-redux';
 import ButtonLoader from './shared/ButtonLoader';
 import { receiveUser } from '../actions/userActions';
+import ProjectService from '../services/projectService';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IAttendeeProps {
@@ -84,7 +84,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
   };
 
   getSlides() {
-    axios.get(process.env.REACT_APP_API_URL + "/project/slides/" + this.props.guid)
+    ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
       this.setState({project: res.data});
     }).catch(err => {

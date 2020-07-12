@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './PrePreview.css';
-import axios from 'axios';
 import { IProject } from '../interfaces/IProject';
 import SlideShow from './shared/SlideShow';
 import CopyText from './shared/CopyText';
+import ProjectService from '../services/projectService';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IPrePreviewProps {
@@ -31,7 +31,7 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
   }
 
   getSlides() {
-    axios.get(process.env.REACT_APP_API_URL + "/project/slides/" + this.props.guid)
+    ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
       this.setState({project: res.data});
     }).catch(err => {

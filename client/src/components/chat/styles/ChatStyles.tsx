@@ -7,10 +7,15 @@ export default {
   input: {
     bottom: 0,
     left: 0,
-    padding: 10
+    padding: 10,
+    fontSize: 13
   },
   button: {
     bottom: 0,
     borderRadius: 0
+  },
+  chatBox: {
+    maxHeight: 350,
+    overflow: 'auto'
   }
 };

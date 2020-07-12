@@ -12,6 +12,7 @@ import ChatArea from './chat/ChatArea';
 import { connect } from 'react-redux';
 import {Editor, EditorState, ContentState } from 'draft-js';
 import 'draft-js/dist/Draft.css';
+import ProjectService from '../services/projectService';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface ILiveCollabProps {
@@ -94,7 +95,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   }
 
   getSlides() {
-    axios.get(process.env.REACT_APP_API_URL + "/project/slides/" + this.props.guid)
+    ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
       let slides = res.data.Slides;
       let initNotes: {[key: number]: EditorState} = {0: EditorState.createEmpty()};

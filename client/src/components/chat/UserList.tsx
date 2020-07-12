@@ -22,11 +22,7 @@ class UserList extends Component<IMessagesProps, IMessagesState> {
     );
 
       return (
-        <div style={styles.container}>
-          <p style={styles.title}>
-            People in presentation
-          </p>
-
+        <div style={styles.container} className="mt-2">
           <ul style={styles.ul}>
             {users}
           </ul>

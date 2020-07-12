@@ -16,7 +16,7 @@ export default {
   ul: {
     listStyleType: 'none',
     margin: 0,
-    padding: '0px 0px 10px 10px'
+    padding: '0px 0px 0px 10px'
   },
   li: {
     color: 'black',
