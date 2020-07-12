@@ -29,7 +29,6 @@ class AddUser extends Component<IAddUserProps, IAddUserState> {
 
     handleClick(event: React.FormEvent) {
       event.preventDefault();
-      console.log(this.state);
       this.props.dispatch(receiveUser(this.state.userName));
     }
 

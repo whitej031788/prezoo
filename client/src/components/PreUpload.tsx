@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 import './PreUpload.css';
 import axios from 'axios';
 import { IProject } from '../interfaces/IProject';
 import SlideShow from './shared/SlideShow';
 import CopyText from './shared/CopyText';
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import ButtonLoader from './shared/ButtonLoader';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IPreUploadProps extends RouteComponentProps {
@@ -13,7 +14,7 @@ interface IPreUploadProps extends RouteComponentProps {
 };
 
 interface IPreUploadState {
-  isLoaded: boolean,
+  isLoading: boolean,
   project?: IProject,
   projectName: string,
   ownerName: string,
@@ -25,7 +26,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
   constructor(props: IPreUploadProps) {
     super(props);
     this.state = { 
-      isLoaded: false,
+      isLoading: false,
       project: undefined,
       projectName: '',
       ownerName: '',
@@ -53,7 +54,6 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
     axios.get(process.env.REACT_APP_API_URL + "/project/slides/" + this.props.guid)
     .then(res => { // then print response status
       this.setState({
-        isLoaded: true,
         project: res.data,
         projectName: res.data.projectName ? res.data.projectName : '',
         ownerName: res.data.ownerName ? res.data.ownerName : '',
@@ -67,12 +67,14 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
   submitPreview = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     const form = event.currentTarget;
+  
     // It really shouldn't be undefined, but this Typescript is doing my head in
     let projectId = this.state.project ? this.state.project.id : 0;
 
     if (form.checkValidity() === false) {
       event.stopPropagation();
     } else {
+      this.setState({isLoading: true});
       axios.put(process.env.REACT_APP_API_URL + "/project/update/" + projectId, {
         projectName: this.state.projectName,
         ownerName: this.state.ownerName,
@@ -81,8 +83,8 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
       .then(res => {
         let redirectUrl = "/pre-prezoo/preview/" + res.data.projectGuid;
         this.props.history.push(redirectUrl);
-        console.log(res);
       }).catch(err => {
+        this.setState({isLoading: false});
         console.log(err);
       })
     }
@@ -140,11 +142,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
                   <CopyText theText={shareLinkCollab} />
                 </div>
                 <p>and code: {this.state.project.collabCode}</p>
-                <Row>
-                  <Col md="12">
-                    <Button type="submit">Preview Presentation &gt;</Button>
-                  </Col>
-                </Row>
+                <ButtonLoader text="Preview presentation" isLoading={this.state.isLoading} isSubmit={true} />
               </Form>
             </Col>
           </Row>)}

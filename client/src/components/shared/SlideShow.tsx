@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Carousel } from 'react-bootstrap';
+import { Carousel, Button } from 'react-bootstrap';
 import './SlideShow.css';
 import { IProject } from '../../interfaces/IProject';
 
@@ -9,7 +9,10 @@ interface ISlideShowProps {
   slideNumber?: number,
   showControls: boolean,
   onSlideSelect?: Function,
-  styles?: object
+  styles?: object,
+  isFullScreen?: boolean,
+  isAttendeeView?: boolean,
+  goFullScreen?: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void)
 };
 
 interface ISlideShowState {};
@@ -41,8 +44,18 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
         );
       });
 
+      let classesToApply = "";
+
+      if (this.props.isFullScreen) {
+        classesToApply = "carouselWrapper full-screen-center";
+      } else {
+        classesToApply = "carouselWrapper";
+      }
+
+      let showButton = !this.props.isFullScreen && this.props.isAttendeeView;
+
       el = (
-        <div className="carouselWrapper" style={this.props.styles ? this.props.styles : undefined}>
+        <div className={classesToApply} style={this.props.styles ? this.props.styles : undefined}>
           <Carousel 
             onSelect={this.onSlideSelect} 
             controls={this.props.showControls} 
@@ -51,6 +64,7 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
           >
             {presentationSlides}
           </Carousel>
+          {showButton && (<Button onClick={this.props.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
         </div>)
     }
     

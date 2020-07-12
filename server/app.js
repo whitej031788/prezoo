@@ -40,7 +40,7 @@ const PORT = process.env.PORT ? process.env.PORT : 3001;
 
 const server = app.listen(PORT, () => {
   // Uncomment the below to drop / add all tables ORM models to your local DB
-  // model.sequelize.drop();
+  //model.sequelize.drop();
   model.sequelize.sync();
 });
 

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Container, Row, Card, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import Dropzone from 'react-dropzone';
 import './Home.css';
 import axios from 'axios';
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import LoadingLeaf from './shared/LoadingLeaf';
+import LoadingGif from './shared/LoadingGif';
 
 // TypeScript, define the properties and state we expect passed to this component
 type IHomeProps = RouteComponentProps;
@@ -26,16 +26,35 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
   }
 
   onFileSelect(acceptedFiles: File[]) {
+    let self = this;
     // Currently we only support a single file upload
-    this.setState({selectedFile: acceptedFiles[0], errorMessage: ''});
+    this.setState({selectedFile: acceptedFiles[0], errorMessage: ''}, function() {
+      self.onSubmit();
+    });
   }
 
   onSubmit() {
     const data = new FormData();
+
+    if (!this.state.selectedFile || !this.state.selectedFile.name) {
+      this.setState({errorMessage: "Please select a file first"});
+      return;
+    }
+
+    let fileName = this.state.selectedFile.name;
+
     if (this.state.selectedFile && this.state.selectedFile.size > 10000000) {
       this.setState({errorMessage: "Your file is over the 10MB limit. Please submit a smaller file."})
       return;
     }
+
+    let fileExt = fileName.split('.').pop();
+
+    if (fileExt !== 'pdf') {
+      this.setState({errorMessage: "Please save your presentation as a PDF file and upload it."})
+      return;   
+    }
+
     this.setState({isLoading: true});
     const blob = this.state.selectedFile as Blob;
     data.append('file', blob);
@@ -55,34 +74,30 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
       <Container className="fill-home-screen" fluid>
         <Row>
           <Container className="p-5">
-            <Col md={{span: 10, offset: 1}}>
+            <Col md={{span: 10, offset: 1}} xs="12">
               <h1 className="main-title">Presentations without the hassle</h1>
-              <Col md={{span: 8, offset: 2}}>
+              <Col md={{span: 8, offset: 2}} xs="12">
                 <p className="text-center">Control your presentations remotely as a team with collaborator notes and chat. Presenting remotely has never been so easy.</p>
               </Col>
+              {this.state.errorMessage && (
+                <Col md={{span: 8, offset: 2}} xs="12" className="alert-danger mb-2 p-2 text-center">{this.state.errorMessage}</Col>
+              )}
               <Dropzone multiple={false} onDrop={this.onFileSelect}>
                 {({getRootProps, getInputProps}) => (
                   <Col md={{span: 8, offset: 2}} sm="12" className="text-center">
                     <section className="dropzone cta-prezoo-button">
                       <div {...getRootProps()}>
                         <input {...getInputProps()} />
-                        {this.state.errorMessage && (
-                          <Col md="12" className="alert-danger mb-2 p-2">{this.state.errorMessage}</Col>
-                        )}
-                        <div><img src="/images/upload.png" alt="Upload" className="brand-logo" />Upload your first finished project</div>
+                        <div>
+                          <LoadingGif isLoading={this.state.isLoading} />
+                          {!this.state.isLoading && (<div><img src="/images/upload.png" alt="Upload" className="brand-logo" /><span>Upload your first finished project</span></div>)}
+                        </div>
                       </div>
                     </section>
                     <div className="small-text mt-1">PDF files only</div>
                   </Col>
                 )}
               </Dropzone>
-              <LoadingLeaf isLoading={this.state.isLoading} />
-              {this.state.selectedFile && (
-                <div className="text-center">
-                  <p>File name: <b>{this.state.selectedFile.name}</b></p>
-                  <Button onClick={this.onSubmit}>Create Project</Button>
-                </div>
-              )}
               <Col md="12" className="mt-4 backgroundImagePresent">
               </Col>
               <Col md={{span: 8, offset: 2}} className="mt-3">

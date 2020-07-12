@@ -1,9 +1,9 @@
 .carouselWrapper {
   /* Height of navbar is 40px */
-  height: calc(100vh - 40px);
-  height: -o-calc(100vh - 40px); /* opera */
-  height: -webkit-calc(100vh - 40px); /* google, safari */
-  height: -moz-calc(100vh - 40px); /* firefox */
+  height: calc(100vh - 70px);
+  height: -o-calc(100vh - 70px); /* opera */
+  height: -webkit-calc(100vh - 70px); /* google, safari */
+  height: -moz-calc(100vh - 70px); /* firefox */
 }
 .carouselWrapper img {
   height: 100%;

@@ -70,6 +70,8 @@ p {
   color: #fff;
   background-color: #751980 !important;
   border-color: #751980 !important;
+  cursor: pointer;
+  min-width: 150px;
 }
 
 .btn-primary:hover {
@@ -79,4 +81,23 @@ p {
   -ms-transform: scale(1.03);
   transform: scale(1.03);
   color: #fff;
+  cursor: pointer;
+}
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  width: 100%;
+}
+
+.full-screen-center {
+  position: fixed !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100vh;
+  width: auto;
 }

@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     collabCode: {
       type: DataTypes.STRING
+    },
+    // 0 = not started, 1 = in progress, 2 = wrap-up, 3 = ended
+    status: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
   }, {
     tableName: 'projects'
