@@ -5,6 +5,7 @@ const model = require('../models');
 const PDFImage = require('pdf-image').PDFImage;
 const env = process.env.NODE_ENV;
 const storageConfig = require(__dirname + '/../config/storage.json')[env];
+const presentationCtrl = require('./PresentationCtrl');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -28,22 +29,20 @@ const ProjectController = () => {
             return res.status(500).json(err);
         }
 
-        console.log('Upload complete');
-
         // The PDF uploaded fine, let's create the individual PNG slides
         var pdfImage = new PDFImage(req.file.path);
         pdfImage.convertFile().then(async function (imagePaths) {
-          console.log('Images converted');
           // If we got here, we have created the PDF file on disk and created a PNG file
           // for every page of the PDF. Now let's create our models and save to DB before sending success
-          const project = await model.Project.create({
+          const project = await model.Project.create();
+
+          const projectAsset = await model.ProjectAsset.create({
+            projectId: project.id,
             originalFileName: req.file.originalname,
             uploadedFileName: req.file.filename,
             filePath: req.file.path,
-            collabCode: generateCollabCode(8)
+            type: 'pdf'
           });
-
-          console.log('Created project');
 
           imagePaths.forEach(async function (value, i) {
             // The pdfImage library returns the full disk path of the new slides
@@ -52,18 +51,26 @@ const ProjectController = () => {
             let filePath = value.replace(storageConfig.publicStoragePath, '');
             await model.Slide.create({
               projectId: project.id,
+              projectAssetId: projectAsset.id,
               order: i + 1,
               filePath: value,
-              fileName: filePath,
-              notes: ''
+              fileName: filePath
             });
+          });
+
+          // As prezoo exists now, create a presentation right at the start
+          // In future we may decouple creating projects from presentations, more a paid feature
+          const presentation = await model.Presentation.create({
+            projectId: project.id,
+            collabCode: presentationCtrl().generateCollabCode(10)
           });
 
           let retObj = {
             success: true,
             projectId: project.id,
-            collabCode: project.collabCode,
-            projectGuid: project.projectGuid
+            presentationId: presentation.id,
+            collabCode: presentation.collabCode,
+            presentationGuid: presentation.presentationGuid
           }
 
           return res.status(200).send(retObj);
@@ -78,14 +85,23 @@ const ProjectController = () => {
     };
   };
 
-  const getProjectAndSlides = async (req, res, next) => {
+  const getProjectAndSlidesByPresentation = async (req, res, next) => {
     try {
+      // Should be able to do a JOIN, but doing this on the plane so
+      // can't stackoverflow it
+      const presentation = await model.Presentation.findOne({
+        where: {
+          presentationGuid: req.params.presentationGuid,
+        }
+      });
+
       const project = await model.Project.findOne({
         where: {
-          projectGuid: req.params.projectGuid,
+          id: presentation.projectId,
         },
         include: { model: model.Slide }
       });
+
       return res.status(200).send(project);
     } catch (error) {
       console.log(error);
@@ -109,19 +125,9 @@ const ProjectController = () => {
     }
   }
 
-  function generateCollabCode(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-
   return {
     projectUpload,
-    getProjectAndSlides,
+    getProjectAndSlidesByPresentation,
     updateProject
   };
 };

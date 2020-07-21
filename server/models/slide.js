@@ -12,7 +12,16 @@ module.exports = (sequelize, DataTypes) => {
         // This is the column name of the referenced model
         key: 'id'
       }
-    }, 
+    },
+    projectAssetId: {
+      type: DataTypes.INTEGER,
+      references: {
+        // This is a reference to another model
+        model: 'projects',
+        // This is the column name of the referenced model
+        key: 'id'
+      }
+    },
     order: {
       type: DataTypes.INTEGER
     },
@@ -31,7 +40,8 @@ module.exports = (sequelize, DataTypes) => {
 
   // Define all related models and how that model is related (type)
   Slide.relations = [
-    {model: 'Project', type: 'belongsTo', opts: {foreignKey: 'projectId'}}
+    {model: 'Project', type: 'belongsTo', opts: {foreignKey: 'projectId'}},
+    {model: 'ProjectAsset', type: 'belongsTo', opts: {foreignKey: 'projectAssetId'}}
   ];
 
   return Slide;

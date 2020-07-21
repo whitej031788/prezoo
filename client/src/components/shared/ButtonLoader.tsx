@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Col, Button, ButtonProps } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IButtonLoaderProps {
@@ -15,15 +15,15 @@ export default class ButtonLoader extends Component<IButtonLoaderProps, IButtonL
     var el = null;
     if (this.props.isLoading) {
       if (this.props.isSubmit) {
-        el = (<Button style={{cursor: 'not-allowed'}} type="submit" disabled><img style={{height: '20px', width: 'auto'}} src="/images/YCZH.gif" /></Button>);
+        el = (<Button style={{cursor: 'not-allowed'}} type="submit" disabled><img alt="Loading" style={{height: '20px', width: 'auto'}} src="/images/YCZH.gif" /></Button>);
       } else {
-        el = (<Button style={{cursor: 'not-allowed'}} type="button" disabled><img style={{height: '20px', width: 'auto'}} src="/images/YCZH.gif" /></Button>);
+        el = (<Button style={{cursor: 'not-allowed'}} type="button" disabled><img alt="Loading" style={{height: '20px', width: 'auto'}} src="/images/YCZH.gif" /></Button>);
       }
     } else {
       if (this.props.isSubmit) {
-        el = (<Button type="submit">{this.props.text} &gt;</Button>);
+        el = (<Button type="submit">{this.props.text}</Button>);
       } else {
-        el = (<Button type="button">{this.props.text} &gt;</Button>);
+        el = (<Button type="button">{this.props.text}</Button>);
       }
     }
     return (

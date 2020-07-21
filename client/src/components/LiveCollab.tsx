@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Tabs, Tab } from 'react-bootstrap';
 import './LiveCollab.css';
-import axios from 'axios';
 import io from 'socket.io-client';
-import { receiveProject}  from '../actions/projectActions';
+import { receivePresentation }  from '../actions/presentationActions';
+import { receiveUser}  from '../actions/userActions';
 import { IProject } from '../interfaces/IProject';
 import { ISlide } from '../interfaces/ISlide';
 import SlideShow from './shared/SlideShow';
@@ -13,6 +13,8 @@ import { connect } from 'react-redux';
 import {Editor, EditorState, ContentState } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import ProjectService from '../services/projectService';
+import StorageService from '../services/storageService';
+import { RootState } from "../reducers";
 
 // TypeScript, define the properties and state we expect passed to this component
 interface ILiveCollabProps {
@@ -48,6 +50,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
     this.startCounting = this.startCounting.bind(this);
     this.onSlideSelect = this.onSlideSelect.bind(this);
     this.onEditorChange = this.onEditorChange.bind(this);
+    this.changeTab = this.changeTab.bind(this);
   }
 
   onEditorChange(editorState: EditorState) {
@@ -63,9 +66,26 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
     this.socket();
   }
 
+  componentDidMount() {
+    let cachedData = StorageService.getPresFromLocalStorage(this.props.guid);
+
+    if (cachedData) {
+      let updateState = JSON.parse(cachedData);
+      this.props.dispatch(receivePresentation(updateState.presentation.slideNumber));
+      this.props.dispatch(receiveUser(updateState.user.userName));
+    } else {
+      this.props.dispatch(receivePresentation(0));
+      this.props.dispatch(receiveUser(""));
+    }
+  }
+
+  componentDidUpdate() {
+    StorageService.setPresLocalStorage(this.props.guid, this.props);
+  }
+
   socket() {
-    this.state.socket.on('changeSlide', (msg: any) => {
-      this.props.dispatch(receiveProject(msg));
+    this.state.socket.on('changeSlide', (msg: number) => {
+      this.props.dispatch(receivePresentation(msg));
     });
   }
   
@@ -92,6 +112,10 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
       console.log(err);
     })*/
     this.state.socket.emit('changeSlide', index );
+  }
+
+  changeTab(selectedTab: string) {
+    console.log(selectedTab);
   }
 
   getSlides() {
@@ -140,12 +164,35 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   render() {
     let shareLinkAttend = process.env.REACT_APP_BASE_URL + '/prezoo-live/' + this.props.guid;
 
+    let slidePreview = null;
+    // Show a preview if we are not at the end
+    if (this.state.project && this.props.presentation.slideNumber < this.state.project.Slides.length - 1) {
+      slidePreview = (
+        <Col md="12" className="text-right">
+          <img
+            src={process.env.REACT_APP_ASSET_URL + this.state.project.Slides[this.props.presentation.slideNumber + 1].fileName} alt="Next Slide" className="slide-show-img-preview"
+          />
+        </Col>
+      )
+    }
+
     return (
       <div className="component-root mt-3">
         <Container>
           {this.state.project && (
           <Row>
             <Col md="7" className="text-center">
+              <Row>
+                <Col md="12">
+                <Tabs defaultActiveKey="slide-show" id="live-collab-controls" onSelect={this.changeTab}>
+                  <Tab eventKey="slide-show" title="Slide Show">
+                  </Tab>
+                  {/* <Tab eventKey="web-browser" title="Web Browser">
+                  </Tab> */}
+                </Tabs>
+                </Col>
+                {slidePreview}
+              </Row>
               <SlideShow styles={{height: '350px'}} slideNumber={this.props.presentation.slideNumber} onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
               <Editor placeholder={'Enter your notes here'} editorState={this.state.notes[this.props.presentation.slideNumber]} onChange={this.onEditorChange} />
             </Col>
@@ -168,8 +215,9 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   }
 }
 
-const mapStateToProps = (state: ILiveCollabState) => ({
-  presentation: state.presentation
+const mapStateToProps = (state: RootState) => ({
+  presentation: state.presentation,
+  user: state.user
 });
 
 export default connect(mapStateToProps)(LiveCollab);

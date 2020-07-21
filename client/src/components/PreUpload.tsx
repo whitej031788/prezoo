@@ -81,7 +81,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
         ownerEmail: this.state.ownerEmail
       })
       .then(res => {
-        let redirectUrl = "/pre-prezoo/preview/" + res.data.projectGuid;
+        let redirectUrl = "/pre-prezoo/preview/" + this.props.guid;
         this.props.history.push(redirectUrl);
       }).catch(err => {
         this.setState({isLoading: false});
@@ -141,8 +141,17 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
                   <a className="ml-1" onClick={(e) => e.preventDefault()} href={shareLinkCollab}>Link</a>
                   <CopyText theText={shareLinkCollab} />
                 </div>
-                <p>and code: {this.state.project.collabCode}</p>
-                <ButtonLoader text="Preview presentation" isLoading={this.state.isLoading} isSubmit={true} />
+                <div>
+                  <p>and code: <b>{this.state.project.collabCode}</b></p>
+                </div>
+                <Row>
+                  <Col md="6">
+                    <ButtonLoader text="Preview presentation" isLoading={this.state.isLoading} isSubmit={true} />
+                  </Col>
+                  <Col md="6">
+                    <ButtonLoader text="Edit presentation" isLoading={this.state.isLoading} isSubmit={false} />
+                  </Col>
+                </Row>
               </Form>
             </Col>
           </Row>)}

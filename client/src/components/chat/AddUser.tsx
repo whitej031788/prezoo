@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
+import Redux from 'redux';
 import { receiveUser } from '../../actions/userActions';
 import styles from './styles/AddUserStyles';
 
 interface IAddUserProps {
-  dispatch: any
+  dispatch: Redux.Dispatch
 };
 
 interface IAddUserState {
@@ -55,7 +56,4 @@ class AddUser extends Component<IAddUserProps, IAddUserState> {
     }
 }
 
-const mapStateToProps = (state: IAddUserState) => ({
-});
-
-export default connect(mapStateToProps)(AddUser);
+export default connect()(AddUser);

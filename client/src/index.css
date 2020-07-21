@@ -43,6 +43,11 @@ p {
   cursor: pointer;
 }
 
+.component-root, .root {
+  -webkit-transition: all 600ms ease;
+  transition: all 600ms ease;
+}
+
 .cta-prezoo-button:hover {
   background-color: #d3a7ff;
   -webkit-transform: scale(1.03);

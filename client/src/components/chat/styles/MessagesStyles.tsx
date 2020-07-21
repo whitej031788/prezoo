@@ -3,7 +3,7 @@ export default {
     width: '100%',
     listStyleType: 'none',
     margin: '0px 0px 0px 0px',
-    padding: 5
+    padding: '15px 5px 15px 5px'
   },
   li: {
     color: 'white',

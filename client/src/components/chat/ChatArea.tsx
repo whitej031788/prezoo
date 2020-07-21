@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import { connect } from 'react-redux';
 import AddUser from './AddUser';
 import Chat from './Chat';
+import { RootState } from "../../reducers";
+import { IUser } from '../../interfaces/IUser';
 
 interface IChatAreaProps {
-  user?: any,
+  user: IUser,
   projectGuid: string,
   socket: SocketIOClient.Socket
 };
 
-interface IChatAreaState {
-  user?: any
-};
+interface IChatAreaState {};
 
 class ChatArea extends Component<IChatAreaProps, IChatAreaState> {
   render() {
@@ -29,7 +29,7 @@ class ChatArea extends Component<IChatAreaProps, IChatAreaState> {
   }
 }
 
-const mapStateToProps = (state: IChatAreaState) => ({
+const mapStateToProps = (state: RootState) => ({
     user: state.user
 });
 

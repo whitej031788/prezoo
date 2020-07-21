@@ -62,7 +62,7 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
     ProjectService.projectUpload(data)
     .then(res => {
       this.setState({isLoading: false});
-      let redirectUrl = "/pre-prezoo/upload/" + res.data.projectGuid;
+      let redirectUrl = "/pre-prezoo/upload/" + res.data.presentationGuid;
       this.props.history.push(redirectUrl);
     }).catch(err => {
       this.setState({isLoading: false});

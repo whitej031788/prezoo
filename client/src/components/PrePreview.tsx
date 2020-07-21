@@ -52,11 +52,15 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
               <SlideShow styles={{height: '350px'}} project={this.state.project} showControls={true} />
             </Col>
             <Col md="4">
-              <p>Host: {this.state.project.ownerName}</p>
-              <div>Share Link with attendee's:                   
+              <p>Presentation Host: {this.state.project.ownerName}</p>
+              <Col md="12">Share Link with collaborators:                   
+                <a className="ml-1" onClick={(e) => e.preventDefault()} href={goLiveLink}>Link</a>
+                  <CopyText theText={goLiveLink} />
+              </Col>
+              <Col md="12" className="mt-2">Share Link with attendees:                   
                 <a className="ml-1" onClick={(e) => e.preventDefault()} href={shareLinkAttend}>Link</a>
                   <CopyText theText={shareLinkAttend} />
-              </div>
+              </Col>
               <Col md="12" className="mt-5">
                 <Link to={goLiveLink}><Button><div>Ready to present?</div><div>Collab center will open automatically</div></Button></Link>
               </Col>

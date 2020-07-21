@@ -4,14 +4,17 @@ import { receiveUserList } from '../../actions/userListActions';
 import { receiveMessage } from '../../actions/chatActions';
 import styles from './styles/ChatStyles';
 import UserList from './UserList';
+import Redux from 'redux';
 import Messages from './Messages';
 import { IChat } from '../../interfaces/IChat';
 import { IUserList } from '../../interfaces/IUserList';
+import { IUser } from '../../interfaces/IUser';
 import { Button, Form } from 'react-bootstrap';
+import { RootState } from "../../reducers";
 
 interface IChatProps {
-  dispatch: any,
-  user: any,
+  dispatch: Redux.Dispatch,
+  user: IUser,
   userList: IUserList,
   chat: IChat,
   projectGuid: string,
@@ -19,24 +22,16 @@ interface IChatProps {
 };
 
 interface IChatState {
-  userList: IUserList,
-  chat: IChat,
-  message?: string,
-  user: any
+  message?: string
 };
 
 class Chat extends Component<IChatProps, IChatState> {
   constructor(props: IChatProps) {
     super(props);
     this.state = {
-      message: undefined,
-      userList: {userList: []},
-      chat: {messages: []},
-      user: this.props.user
+      message: undefined
     };
   }
-
-  
 
   componentDidMount() {
     this.socket();
@@ -46,7 +41,7 @@ class Chat extends Component<IChatProps, IChatState> {
     const username = this.props.user.userName;
 
     // receive userlist
-    this.props.socket.on('chatUsers', (msg: any) => {
+    this.props.socket.on('chatUsers', (msg: string) => {
       this.props.dispatch(receiveUserList(msg));
     });
 
@@ -54,17 +49,17 @@ class Chat extends Component<IChatProps, IChatState> {
     this.props.socket.emit('chatJoin', { timestamp: new Date(), sender: username, message: 'joined' });
 
     // receive join message
-    this.props.socket.on('chatJoin', (msg: any) => {
+    this.props.socket.on('chatJoin', (msg: string) => {
       this.props.dispatch(receiveMessage(msg));
     });
 
     // receive leave message
-    this.props.socket.on('chatLeave', (msg: any) => {
+    this.props.socket.on('chatLeave', (msg: string) => {
       this.props.dispatch(receiveMessage(msg));
     });
 
     // receive message
-    this.props.socket.on('chatMessage', (msg: any) => {
+    this.props.socket.on('chatMessage', (msg: string) => {
       this.props.dispatch(receiveMessage(msg));
       // Scroll to the bottom after an add
       var elem = document.getElementById('chat-box');
@@ -74,7 +69,7 @@ class Chat extends Component<IChatProps, IChatState> {
     });
 
     // send leave message when user leaves the page
-    window.addEventListener('beforeunload', (ev) => {
+    window.addEventListener('beforeunload', (ev: Event) => {
       ev.preventDefault();
 
       this.props.socket.emit('chatLeave', { timestamp: new Date(), sender: username, message: 'left' });
@@ -105,7 +100,7 @@ class Chat extends Component<IChatProps, IChatState> {
   render() {
     return (
       <div>
-        <UserList userList={this.props.userList.userList} />
+        <UserList userList={this.props.userList} />
         <div className="scrollable-chat-box" id="chat-box" style={styles.chatBox}>
           <Messages messages={this.props.chat.messages} />
         </div>
@@ -128,7 +123,7 @@ class Chat extends Component<IChatProps, IChatState> {
   }
 }
 
-const mapStateToProps = (state: IChatState) => ({
+const mapStateToProps = (state: RootState) => ({
   user: state.user,
   userList: state.userList,
   chat: state.chat

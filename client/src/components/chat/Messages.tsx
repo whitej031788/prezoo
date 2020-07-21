@@ -10,11 +10,6 @@ interface IMessagesProps {
 interface IMessagesState {};
 
 class Messages extends Component<IMessagesProps,IMessagesState > {
-  componentDidUpdate() {
-    // scroll to bottom
-    // window.scrollTo(0, this.refs.chat.scrollHeight);
-  }
-
   render() {
     const { messages } = this.props;
 

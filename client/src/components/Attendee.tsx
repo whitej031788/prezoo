@@ -1,31 +1,35 @@
 import React, { Component } from "react";
+import Redux from 'redux';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import './Attendee.css';
 import io from 'socket.io-client';
-import { receiveProject}  from '../actions/projectActions';
+import { receivePresentation }  from '../actions/presentationActions';
 import { IProject } from '../interfaces/IProject';
+import { IPresentation } from '../interfaces/IPresentation';
+import { RootState } from "../reducers";
+import { IUser } from '../interfaces/IUser';
 import SlideShow from './shared/SlideShow';
 import { connect } from 'react-redux';
 import ButtonLoader from './shared/ButtonLoader';
 import { receiveUser } from '../actions/userActions';
 import ProjectService from '../services/projectService';
+import StorageService from '../services/storageService';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IAttendeeProps {
   guid: string,
-  dispatch: any,
-  presentation: {slideNumber: number},
-  user?: any
+  dispatch: Redux.Dispatch,
+  presentation: IPresentation,
+  user: IUser
 };
 
 interface IAttendeeState {
   project?: IProject,
   socket: SocketIOClient.Socket,
-  presentation: {slideNumber: number},
-  user?: any,
-  userName: string,
   validated: boolean,
-  isFullScreen: boolean
+  isFullScreen: boolean,
+  userName: string,
+  presentation: IPresentation
 };
 
 class Attendee extends Component<IAttendeeProps, IAttendeeState> {
@@ -33,10 +37,10 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     super(props);
     this.state = { 
       project: undefined,
-      userName: '',
+      presentation: {slideNumber: 0},
       validated: false,
       isFullScreen: false,
-      presentation: {slideNumber: 0},
+      userName: '',
       socket: io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.guid) as string)
     };
 
@@ -53,14 +57,31 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       let fullScreenElement = document.fullscreenElement;
       self.setState({isFullScreen: fullScreenElement ? true : false}, function() {
         let message = self.state.isFullScreen ? 'Went full screen' : 'Exit full screen';
-        self.state.socket.emit('chatMessage', { timestamp: new Date(), sender: self.state.userName, message: message });
+        self.state.socket.emit('chatMessage', { timestamp: new Date(), sender: self.props.user.userName, message: message });
       });
-    }; 
+    };
+  }
+
+  componentDidMount() {
+    let cachedData = StorageService.getPresFromLocalStorage(this.props.guid);
+
+    if (cachedData) {
+      let updateState = JSON.parse(cachedData);
+      this.props.dispatch(receivePresentation(updateState.presentation.slideNumber));
+      this.props.dispatch(receiveUser(updateState.user.userName));
+    } else {
+      this.props.dispatch(receivePresentation(0));
+      this.props.dispatch(receiveUser(""));
+    }
+  }
+
+  componentDidUpdate() {
+    StorageService.setPresLocalStorage(this.props.guid, this.props);
   }
 
   socket() {
-    this.state.socket.on('changeSlide', (msg: any) => {
-      this.props.dispatch(receiveProject(msg));
+    this.state.socket.on('changeSlide', (msg: number) => {
+      this.props.dispatch(receivePresentation(msg));
     });
   }
 
@@ -155,7 +176,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
   }
 }
 
-const mapStateToProps = (state: IAttendeeState) => ({
+const mapStateToProps = (state: RootState) => ({
   presentation: state.presentation,
   user: state.user
 });

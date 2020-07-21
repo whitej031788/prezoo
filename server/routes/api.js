@@ -8,8 +8,8 @@ module.exports = (router) => {
   router.route('/project/upload')
     .post(projectCtrl().projectUpload);
 
-  router.route('/project/slides/:projectGuid')
-    .get(projectCtrl().getProjectAndSlides);
+  router.route('/project/slides/:presentationGuid')
+    .get(projectCtrl().getProjectAndSlidesByPresentation);
 
   router.route('/project/update/:projectId')
     .put(projectCtrl().updateProject);
