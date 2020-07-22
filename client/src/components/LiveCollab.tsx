@@ -30,7 +30,9 @@ interface ILiveCollabState {
   elapsedTimeDisplay: string,
   socket: SocketIOClient.Socket,
   presentation: {slideNumber: number},
-  notes: {[key: number]: EditorState}
+  notes: {[key: number]: EditorState},
+  videoDom: HTMLVideoElement,
+  peerConnections: any
 };
 
 class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
@@ -38,6 +40,8 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
     super(props);
     this.state = { 
       isLoaded: false,
+      peerConnections: {},
+      videoDom: document.querySelector("video") as HTMLVideoElement,
       project: undefined,
       elapsedTime: 0,
       elapsedTimeDisplay: '',
@@ -62,8 +66,10 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   }
 
   componentWillMount() {
+    window.onunload = window.onbeforeunload = () => {
+      this.state.socket.close();
+    }
     this.getSlides();
-    this.socket();
   }
 
   componentDidMount() {
@@ -77,6 +83,10 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
       this.props.dispatch(receivePresentation(0));
       this.props.dispatch(receiveUser(""));
     }
+
+    this.setState({
+      videoDom: document.querySelector("video") as HTMLVideoElement
+    }, () => this.socket());
   }
 
   componentDidUpdate() {
@@ -87,6 +97,69 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
     this.state.socket.on('changeSlide', (msg: number) => {
       this.props.dispatch(receivePresentation(msg));
     });
+
+    this.state.socket.on("watcher", (id: number) => {
+      const config = {
+        iceServers: [
+          {
+            urls: ["stun:stun.l.google.com:19302"]
+          }
+        ]
+      };
+      let peerConnectionsTemp = this.state.peerConnections;
+      const peerConnection = new RTCPeerConnection(config);
+      peerConnectionsTemp[id] = peerConnection;
+      this.setState({peerConnections: peerConnectionsTemp});
+    
+      let stream = this.state.videoDom.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
+      peerConnection.onicecandidate = event => {
+        if (event.candidate) {
+          this.state.socket.emit("candidate", id, event.candidate);
+        }
+      };
+    
+      peerConnection
+        .createOffer()
+        .then(sdp => peerConnection.setLocalDescription(sdp))
+        .then(() => {
+          this.state.socket.emit("offer", id, peerConnection.localDescription);
+        });
+    });
+    
+    this.state.socket.on("answer", (id: string, description: string) => {
+      this.state.peerConnections[id].setRemoteDescription(description);
+    });
+    
+    this.state.socket.on("candidate", (id: string, candidate: RTCIceCandidateInit | undefined) => {
+      this.state.peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
+    });
+
+    this.state.socket.on("disconnectPeer", (id: string) => {
+      console.log(this.state.peerConnections);
+      console.log(id);
+      if (this.state.peerConnections[id]) {
+        this.state.peerConnections[id].close();
+        delete this.state.peerConnections[id];
+      }
+    });
+
+    // Media contrains
+    const constraints = {
+      video: { facingMode: "user" }
+      // Uncomment to enable audio
+      // audio: true,
+    };
+
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(stream => {
+        let video = document.querySelector("video") as HTMLVideoElement;
+        video.srcObject = stream;
+        this.setState({videoDom: video});
+        this.state.socket.emit("broadcaster");
+      })
+      .catch(error => console.error(error));
   }
   
   onSlideSelect(index: number) {
@@ -168,11 +241,9 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
     // Show a preview if we are not at the end
     if (this.state.project && this.props.presentation.slideNumber < this.state.project.Slides.length - 1) {
       slidePreview = (
-        <Col md="12" className="text-right">
-          <img
-            src={process.env.REACT_APP_ASSET_URL + this.state.project.Slides[this.props.presentation.slideNumber + 1].fileName} alt="Next Slide" className="slide-show-img-preview"
-          />
-        </Col>
+        <img
+          src={process.env.REACT_APP_ASSET_URL + this.state.project.Slides[this.props.presentation.slideNumber + 1].fileName} alt="Next Slide" className="slide-show-img-preview"
+        />
       )
     }
 
@@ -191,12 +262,19 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
                   </Tab> */}
                 </Tabs>
                 </Col>
-                {slidePreview}
               </Row>
               <SlideShow styles={{height: '350px'}} slideNumber={this.props.presentation.slideNumber} onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
               <Editor placeholder={'Enter your notes here'} editorState={this.state.notes[this.props.presentation.slideNumber]} onChange={this.onEditorChange} />
             </Col>
             <Col md="5">
+              <Row>
+                <Col md="6" className="text-center">
+                  <video className="host-camera" playsInline autoPlay muted></video>
+                </Col>
+                <Col md="6" className="text-center">
+                  {slidePreview}
+                </Col>
+              </Row>
               <Row>
                 <Col md="6">
                   <span>Attendee Link:</span> <CopyText theText={shareLinkAttend} />

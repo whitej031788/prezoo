@@ -29,15 +29,28 @@ interface IAttendeeState {
   validated: boolean,
   isFullScreen: boolean,
   userName: string,
-  presentation: IPresentation
+  presentation: IPresentation,
+  videoDom: HTMLVideoElement,
+  peerConnection: RTCPeerConnection
 };
 
 class Attendee extends Component<IAttendeeProps, IAttendeeState> {
   constructor(props: IAttendeeProps) {
     super(props);
+
+    const config = {
+      iceServers: [
+        {
+          urls: ["stun:stun.l.google.com:19302"]
+        }
+      ]
+    };
+
     this.state = { 
       project: undefined,
       presentation: {slideNumber: 0},
+      videoDom: document.querySelector("video") as HTMLVideoElement,
+      peerConnection: new RTCPeerConnection(config),
       validated: false,
       isFullScreen: false,
       userName: '',
@@ -49,7 +62,6 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
 
   componentWillMount() {
     this.getSlides();
-    this.socket();
     let self = this;
     
     document.onfullscreenchange = function (event) {
@@ -73,6 +85,10 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       this.props.dispatch(receivePresentation(0));
       this.props.dispatch(receiveUser(""));
     }
+
+    this.setState({
+      videoDom: document.querySelector("video") as HTMLVideoElement
+    }, () => this.socket());
   }
 
   componentDidUpdate() {
@@ -83,6 +99,56 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     this.state.socket.on('changeSlide', (msg: number) => {
       this.props.dispatch(receivePresentation(msg));
     });
+
+    this.state.socket.on("offer", (id: string, description: RTCSessionDescriptionInit) => {
+      let peerConnTemp = this.state.peerConnection;
+
+      peerConnTemp
+        .setRemoteDescription(description)
+        .then(() => this.state.peerConnection.createAnswer())
+        .then(sdp => this.state.peerConnection.setLocalDescription(sdp))
+        .then(() => {
+          this.state.socket.emit("answer", id, this.state.peerConnection.localDescription);
+        });
+
+      peerConnTemp.ontrack = event => {
+        let video = document.querySelector("video") as HTMLVideoElement;
+        if (video) {
+          video.srcObject = event.streams[0];
+          this.setState({videoDom: video});
+        }
+      };
+
+      peerConnTemp.onicecandidate = event => {
+        if (event.candidate) {
+          this.state.socket.emit("candidate", id, event.candidate);
+        }
+      };
+
+      this.setState({peerConnection: peerConnTemp});
+    });
+
+    this.state.socket.on("candidate", (id: string, candidate: RTCIceCandidateInit | undefined) => {
+      this.state.peerConnection
+        .addIceCandidate(new RTCIceCandidate(candidate))
+        .catch(e => console.error(e));
+    });
+    
+    this.state.socket.on("connect", () => {
+      this.state.socket.emit("watcher");
+    });
+    
+    this.state.socket.on("broadcaster", () => {
+      this.state.socket.emit("watcher");
+    });
+    
+    this.state.socket.on("disconnectPeer", () => {
+      this.state.peerConnection.close();
+    });
+    
+    window.onunload = window.onbeforeunload = () => {
+      this.state.socket.close();
+    };
   }
 
   goFullScreen(event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -150,14 +216,22 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       </Col>
     ) : null;
     const slideShow = username ? (
-      <SlideShow 
-        slideNumber={this.props.presentation.slideNumber} 
-        project={this.state.project} 
-        showControls={false}
-        isFullScreen={this.state.isFullScreen}
-        isAttendeeView={true}
-        goFullScreen={this.goFullScreen}
-      /> 
+      <Row>
+        <Col md="9">
+          <SlideShow 
+          slideNumber={this.props.presentation.slideNumber} 
+          project={this.state.project} 
+          showControls={false}
+          isFullScreen={this.state.isFullScreen}
+          isAttendeeView={true}
+          goFullScreen={this.goFullScreen}
+        /> 
+        </Col>
+        <Col md="3">
+          <video className="host-camera" playsInline autoPlay muted></video>
+        </Col>
+      </Row>
+
     ) : null;
     return (
       <div className={"component-root " + appliedClass} id="full-screen-target">

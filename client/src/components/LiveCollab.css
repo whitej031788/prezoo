@@ -19,8 +19,4 @@ div.DraftEditor-root {
 .slide-show-img-preview {
   height: 100px;
   width: auto;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  z-index: 1000;
 }

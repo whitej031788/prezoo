@@ -102,7 +102,13 @@ const ProjectController = () => {
         include: { model: model.Slide }
       });
 
-      return res.status(200).send(project);
+      let retObj = {
+        success: true,
+        project: project,
+        presentation: presentation
+      }
+
+      return res.status(200).send(retObj);
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);

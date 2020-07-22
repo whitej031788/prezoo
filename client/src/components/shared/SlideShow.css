@@ -18,10 +18,6 @@
   width: auto;
 }
 
-.carousel-indicators li { 
-  visibility: hidden; 
-}
-
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   height: 75px;

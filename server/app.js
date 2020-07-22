@@ -40,13 +40,14 @@ const PORT = process.env.PORT ? process.env.PORT : 3001;
 
 const server = app.listen(PORT, () => {
   // Uncomment the below to drop / add all tables ORM models to your local DB
-  model.sequelize.drop();
+  //model.sequelize.drop();
   model.sequelize.sync();
 });
 
 const io = socketIo(server);
 
 let usersList = {};
+let broadcaster;
 
 // Need a better way to do this than just in the JS memory
 // We are keeping a running tally by room of attendants; maybe firebase? Mongo? Redis?
@@ -108,6 +109,31 @@ io.on("connection", (socket) => {
   // slide change
   socket.on('changeSlide', function (msg) {
     io.sockets.in("room-" + socket.handshake.query.projectGuid).emit('changeSlide', msg);
+  });
+
+  socket.on("broadcaster", () => {
+    broadcaster = socket.id;
+    socket.broadcast.emit("broadcaster");
+  });
+
+  socket.on("watcher", () => {
+    socket.to(broadcaster).emit("watcher", socket.id);
+  });
+
+  socket.on("disconnect", () => {
+    socket.to(broadcaster).emit("disconnectPeer", socket.id);
+  });
+
+  socket.on("offer", (id, message) => {
+    socket.to(id).emit("offer", socket.id, message);
+  });
+
+  socket.on("answer", (id, message) => {
+    socket.to(id).emit("answer", socket.id, message);
+  });
+
+  socket.on("candidate", (id, message) => {
+    socket.to(id).emit("candidate", socket.id, message);
   });
 });
 

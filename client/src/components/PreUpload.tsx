@@ -19,7 +19,8 @@ interface IPreUploadState {
   projectName: string,
   ownerName: string,
   ownerEmail: string,
-  validated: boolean
+  validated: boolean,
+  collabCode: string
 };
 
 class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
@@ -28,6 +29,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
     this.state = { 
       isLoading: false,
       project: undefined,
+      collabCode: '',
       projectName: '',
       ownerName: '',
       ownerEmail: '',
@@ -54,7 +56,8 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
     ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
       this.setState({
-        project: res.data,
+        project: res.data.project,
+        collabCode: res.data.presentation.collabCode,
         projectName: res.data.projectName ? res.data.projectName : '',
         ownerName: res.data.ownerName ? res.data.ownerName : '',
         ownerEmail: res.data.ownerEmail ? res.data.ownerEmail : ''
@@ -97,6 +100,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
     return (
       <div className="component-root">
         <Container>
+          <h1 className="route-title">Project Upload</h1>
           <Row>
             <Col md={{span: 10, offset: 1}}>
               <p>Actions</p>
@@ -142,14 +146,14 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
                   <CopyText theText={shareLinkCollab} />
                 </div>
                 <div>
-                  <p>and code: <b>{this.state.project.collabCode}</b></p>
+                  <p>and code: <b>{this.state.collabCode}</b></p>
                 </div>
                 <Row>
                   <Col md="6">
-                    <ButtonLoader text="Preview presentation" isLoading={this.state.isLoading} isSubmit={true} />
+                    <ButtonLoader text="Preview" isLoading={this.state.isLoading} isSubmit={true} />
                   </Col>
                   <Col md="6">
-                    <ButtonLoader text="Edit presentation" isLoading={this.state.isLoading} isSubmit={false} />
+                    <ButtonLoader text="Edit" isLoading={this.state.isLoading} isSubmit={false} />
                   </Col>
                 </Row>
               </Form>
