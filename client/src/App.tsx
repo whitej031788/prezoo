@@ -16,6 +16,7 @@ import PrePreview from "./components/PrePreview";
 import LiveCollab from "./components/LiveCollab";
 import Attendee from "./components/Attendee";
 import AppNav from "./components/shared/AppNav";
+import ProjEdit from "./components/ProjEdit";
 
 interface MatchParams {
   guid: string;
@@ -62,6 +63,8 @@ class App extends Component {
           <HomeNavRoute exact path="/white-label" component={WhiteLabel} />
           <Route exact path="/pre-prezoo/upload/:guid" render={( {match}: ChildComponentProps) => (
             <><AppNav /><PreUpload guid={match.params.guid} /></> )} />
+          <Route exact path="/pre-prezoo/edit/:guid" render={( {match}: ChildComponentProps) => (
+            <><AppNav /><ProjEdit guid={match.params.guid} /></> )} />
           <Route exact path="/pre-prezoo/preview/:guid" render={( {match}: ChildComponentProps) => (
             <><AppNav /><PrePreview guid={match.params.guid} /></> )} />
           <Route exact path="/prezoo-live/collaborator/:guid" render={( {match}: ChildComponentProps) => (

@@ -14,7 +14,8 @@ interface IPrePreviewProps {
 
 interface IPrePreviewState {
   isLoaded: Boolean,
-  project?: IProject
+  project?: IProject,
+  localSlideNumber: number
 };
 
 class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
@@ -22,7 +23,8 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
     super(props);
     this.state = { 
       isLoaded: false,
-      project: undefined
+      project: undefined,
+      localSlideNumber: 0
     };
   }
 
@@ -33,7 +35,7 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
   getSlides() {
     ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
-      this.setState({project: res.data});
+      this.setState({project: res.data.project});
     }).catch(err => {
       console.log(err);
     })
@@ -41,19 +43,20 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
 
   render() {
     let shareLinkAttend = process.env.REACT_APP_BASE_URL + '/prezoo-live/' + this.props.guid;
-    let goLiveLink = '/prezoo-live/collaborator/' + this.props.guid;
+    let goLiveLink = process.env.REACT_APP_BASE_URL + '/prezoo-live/collaborator/' + this.props.guid;
 
     return (
       <div className="component-root">
         <Container>
+          <h1 className="route-title">Project Preview</h1>
           {this.state.project && (
           <Row>
             <Col md="8" className="text-center">
-              <SlideShow styles={{height: '350px'}} project={this.state.project} showControls={true} />
+              <SlideShow onSlideSelect={(index: number) => this.setState({localSlideNumber: index})} slideNumber={this.state.localSlideNumber} styles={{height: '350px'}} project={this.state.project} showControls={true} />
             </Col>
             <Col md="4">
-              <p>Presentation Host: {this.state.project.ownerName}</p>
-              <Col md="12">Share Link with collaborators:                   
+              <Col md="12" className="mb-5"><p style={{fontWeight: 900, fontSize: '26px'}}>Host: {this.state.project.ownerName}</p></Col>
+              <Col md="12" className="mt-5">Share Link with collaborators:                   
                 <a className="ml-1" onClick={(e) => e.preventDefault()} href={goLiveLink}>Link</a>
                   <CopyText theText={goLiveLink} />
               </Col>
@@ -61,15 +64,9 @@ class PrePreview extends Component<IPrePreviewProps, IPrePreviewState> {
                 <a className="ml-1" onClick={(e) => e.preventDefault()} href={shareLinkAttend}>Link</a>
                   <CopyText theText={shareLinkAttend} />
               </Col>
-              <Col md="12" className="mt-5">
-                <Link to={goLiveLink}><Button><div>Ready to present?</div><div>Collab center will open automatically</div></Button></Link>
+              <Col md="12" className="mt-5" style={{position:'absolute', bottom: 0}}>
+                <Link to={'/prezoo-live/collaborator/' + this.props.guid}><Button><div>Ready to present?</div><div>Collab center will open automatically</div></Button></Link>
               </Col>
-            </Col>
-            <Col md="12">
-              <b>Next</b>
-            </Col>
-            <Col md="12">
-              <p>Share your link with attendee's or once you begin presenting. Open your slides to full screen and share that over your video hosting platform</p>
             </Col>
           </Row>
           )}

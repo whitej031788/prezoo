@@ -42,3 +42,37 @@
 .carousel, .carousel-inner, .carousel-item {
   height: 100%;
 }
+
+.prezoo-carousel-indicators {
+  margin: 0 0 0;
+  overflow: auto;
+  white-space: nowrap;
+  width: 100%;
+  background-color: #ececec;
+  padding: 5px;
+  border-radius: 5px;
+  text-align: left;
+}
+.prezoo-carousel-indicators li {
+  background-color: transparent;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  display: inline-block;
+  height: auto;
+  margin: 0 !important;
+  width: auto;
+  padding: 3px;
+}
+.prezoo-carousel-indicators li img {
+  display: block;
+  opacity: 0.5;
+  height: 50px;
+  width: auto;
+}
+.prezoo-carousel-indicators li.active img {
+  opacity: 1;
+}
+.prezoo-carousel-indicators li:hover img {
+  opacity: 0.75;
+  cursor: pointer;
+}

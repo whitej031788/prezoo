@@ -30,6 +30,12 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
     }
   }
 
+  onIndicatorClick(index: Number) {
+    if (this.props.onSlideSelect) {
+      this.props.onSlideSelect(index);
+    }
+  }
+
   render() {
     let el = null;
     
@@ -44,6 +50,16 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
         );
       });
 
+      const slideIndicators = this.props.project.Slides.map((slide: any, k: Number) => {
+        let activeClass = undefined;
+        if (k === this.props.slideNumber) {
+          activeClass = "active";
+        }
+        return (
+          <li draggable={true} key={slide.id} onClick={() => this.onIndicatorClick(k)} className={activeClass} data-target='#carousel-custom' data-slide-to={k}><img src={process.env.REACT_APP_ASSET_URL + slide.fileName} alt='' /></li>
+        );
+      });
+
       let classesToApply = "";
 
       if (this.props.isFullScreen) {
@@ -55,16 +71,22 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
       let showButton = !this.props.isFullScreen && this.props.isAttendeeView;
 
       el = (
-        <div className={classesToApply} style={this.props.styles ? this.props.styles : undefined}>
-          <Carousel 
-            onSelect={this.onSlideSelect} 
-            controls={this.props.showControls} 
-            slide={false} interval={null} 
-            activeIndex={this.props.slideNumber}
-          >
-            {presentationSlides}
-          </Carousel>
-          {showButton && (<Button onClick={this.props.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
+        <div>
+          <div className={classesToApply} style={this.props.styles ? this.props.styles : undefined}>
+            <Carousel 
+              onSelect={this.onSlideSelect} 
+              controls={this.props.showControls} 
+              slide={false} interval={null} 
+              activeIndex={this.props.slideNumber}
+              indicators={false}
+              wrap={false}
+              id="carousel-custom"
+            >
+              {presentationSlides}
+            </Carousel>
+            {showButton && (<Button onClick={this.props.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
+          </div>
+          {this.props.showControls && (<ol className="prezoo-carousel-indicators">{slideIndicators}</ol>)}
         </div>)
     }
     

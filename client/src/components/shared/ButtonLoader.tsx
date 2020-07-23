@@ -5,7 +5,9 @@ import { Row, Col, Button } from 'react-bootstrap';
 interface IButtonLoaderProps {
   isLoading: Boolean,
   text: string,
-  isSubmit: Boolean
+  isSubmit: Boolean,
+  name?: string,
+  onClick?: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void)
 };
 
 interface IButtonLoaderState {};
@@ -15,15 +17,15 @@ export default class ButtonLoader extends Component<IButtonLoaderProps, IButtonL
     var el = null;
     if (this.props.isLoading) {
       if (this.props.isSubmit) {
-        el = (<Button style={{cursor: 'not-allowed'}} type="submit" disabled><img alt="Loading" style={{height: '20px', width: 'auto'}} src="/images/YCZH.gif" /></Button>);
+        el = (<Button name={this.props.name} style={{cursor: 'not-allowed'}} type="submit" disabled><img alt="Loading" style={{height: '20px', width: 'auto'}} src="/images/YCZH.gif" /></Button>);
       } else {
-        el = (<Button style={{cursor: 'not-allowed'}} type="button" disabled><img alt="Loading" style={{height: '20px', width: 'auto'}} src="/images/YCZH.gif" /></Button>);
+        el = (<Button onClick={this.props.onClick} name={this.props.name} style={{cursor: 'not-allowed'}} type="button" disabled><img alt="Loading" style={{height: '20px', width: 'auto'}} src="/images/YCZH.gif" /></Button>);
       }
     } else {
       if (this.props.isSubmit) {
-        el = (<Button type="submit">{this.props.text}</Button>);
+        el = (<Button name={this.props.name} type="submit">{this.props.text}</Button>);
       } else {
-        el = (<Button type="button">{this.props.text}</Button>);
+        el = (<Button onClick={this.props.onClick} name={this.props.name} type="button">{this.props.text}</Button>);
       }
     }
     return (

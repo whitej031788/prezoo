@@ -7,10 +7,13 @@ import CopyText from './shared/CopyText';
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import ButtonLoader from './shared/ButtonLoader';
 import ProjectService from '../services/projectService';
+import { connect } from 'react-redux';
+import { receiveUser}  from '../actions/userActions';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IPreUploadProps extends RouteComponentProps {
-  guid: string
+  guid: string,
+  dispatch: any
 };
 
 interface IPreUploadState {
@@ -20,7 +23,9 @@ interface IPreUploadState {
   ownerName: string,
   ownerEmail: string,
   validated: boolean,
-  collabCode: string
+  collabCode: string,
+  localSlideNumber: number,
+  nextPage: string
 };
 
 class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
@@ -33,11 +38,14 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
       projectName: '',
       ownerName: '',
       ownerEmail: '',
-      validated: false
+      validated: false,
+      localSlideNumber: 0,
+      nextPage: 'preview'
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.submitPreview = this.submitPreview.bind(this);
+    this.goToEdit = this.goToEdit.bind(this);
   }
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -58,24 +66,34 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
       this.setState({
         project: res.data.project,
         collabCode: res.data.presentation.collabCode,
-        projectName: res.data.projectName ? res.data.projectName : '',
-        ownerName: res.data.ownerName ? res.data.ownerName : '',
-        ownerEmail: res.data.ownerEmail ? res.data.ownerEmail : ''
+        projectName: res.data.project.projectName ? res.data.project.projectName : '',
+        ownerName: res.data.project.ownerName ? res.data.project.ownerName : '',
+        ownerEmail: res.data.project.ownerEmail ? res.data.project.ownerEmail : ''
       });
     }).catch(err => {
       console.log(err);
     })
   }
 
-  submitPreview = (event: React.FormEvent<HTMLFormElement>): void => {
+  goToEdit(event: React.MouseEvent) {
     event.preventDefault();
-    const form = event.currentTarget;
+    this.setState({nextPage: "edit"}, () => {this.submitPreview(undefined)});
+  }
+
+  submitPreview = (event: React.FormEvent<HTMLFormElement> | undefined): void => {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const form = document.querySelector("form") as HTMLFormElement;
   
     // It really shouldn't be undefined, but this Typescript is doing my head in
     let projectId = this.state.project ? this.state.project.id : 0;
 
     if (form.checkValidity() === false) {
-      event.stopPropagation();
+      if (event) {
+        event.stopPropagation();
+      }
     } else {
       this.setState({isLoading: true});
       ProjectService.updateProject(projectId, {
@@ -84,7 +102,8 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
         ownerEmail: this.state.ownerEmail
       })
       .then(res => {
-        let redirectUrl = "/pre-prezoo/preview/" + this.props.guid;
+        this.props.dispatch(receiveUser(this.state.ownerName));
+        let redirectUrl = "/pre-prezoo/" + this.state.nextPage + "/" + this.props.guid;
         this.props.history.push(redirectUrl);
       }).catch(err => {
         this.setState({isLoading: false});
@@ -115,7 +134,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
           {this.state.project && (
           <Row>
             <Col md="8" className="text-center">
-              <SlideShow styles={{height: '350px'}} project={this.state.project} showControls={true} />
+              <SlideShow onSlideSelect={(index: number) => this.setState({localSlideNumber: index})} slideNumber={this.state.localSlideNumber} styles={{height: '350px'}} project={this.state.project} showControls={true} />
             </Col>
             <Col md="4">
               <Form noValidate validated={this.state.validated} onSubmit={this.submitPreview}>
@@ -150,10 +169,10 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
                 </div>
                 <Row>
                   <Col md="6">
-                    <ButtonLoader text="Preview" isLoading={this.state.isLoading} isSubmit={true} />
+                    <ButtonLoader name="preview" text="Preview" isLoading={this.state.isLoading} isSubmit={true} />
                   </Col>
                   <Col md="6">
-                    <ButtonLoader text="Edit" isLoading={this.state.isLoading} isSubmit={false} />
+                    <ButtonLoader name="edit" text="Edit" isLoading={this.state.isLoading} isSubmit={false} onClick={this.goToEdit} />
                   </Col>
                 </Row>
               </Form>
@@ -165,4 +184,4 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
   }
 }
 
-export default withRouter(PreUploadComponent);
+export default connect()(withRouter(PreUploadComponent));

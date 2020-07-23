@@ -10,7 +10,7 @@ import SlideShow from './shared/SlideShow';
 import CopyText from './shared/CopyText';
 import ChatArea from './chat/ChatArea';
 import { connect } from 'react-redux';
-import {Editor, EditorState, ContentState } from 'draft-js';
+import { Editor, EditorState, ContentState } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import ProjectService from '../services/projectService';
 import StorageService from '../services/storageService';
@@ -81,7 +81,6 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
       this.props.dispatch(receiveUser(updateState.user.userName));
     } else {
       this.props.dispatch(receivePresentation(0));
-      this.props.dispatch(receiveUser(""));
     }
 
     this.setState({
@@ -194,7 +193,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   getSlides() {
     ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
-      let slides = res.data.Slides;
+      let slides = res.data.project.Slides;
       let initNotes: {[key: number]: EditorState} = {0: EditorState.createEmpty()};
 
       slides.forEach(function (value: ISlide, i: number) {
@@ -204,7 +203,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
         }
       });
 
-      this.setState({project: res.data, notes: initNotes});
+      this.setState({project: res.data.project, notes: initNotes});
       this.startCounting();
     }).catch(err => {
       console.log(err);
@@ -252,7 +251,8 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
         <Container>
           {this.state.project && (
           <Row>
-            <Col md="7" className="text-center">
+            <Col md="8" className="text-center">
+              <h1 className="route-title">{this.state.project.projectName}</h1>
               <Row>
                 <Col md="12">
                 <Tabs defaultActiveKey="slide-show" id="live-collab-controls" onSelect={this.changeTab}>
@@ -266,7 +266,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
               <SlideShow styles={{height: '350px'}} slideNumber={this.props.presentation.slideNumber} onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
               <Editor placeholder={'Enter your notes here'} editorState={this.state.notes[this.props.presentation.slideNumber]} onChange={this.onEditorChange} />
             </Col>
-            <Col md="5">
+            <Col md="4">
               <Row>
                 <Col md="6" className="text-center">
                   <video className="host-camera" playsInline autoPlay muted></video>

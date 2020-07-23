@@ -176,7 +176,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
   getSlides() {
     ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
-      this.setState({project: res.data});
+      this.setState({project: res.data.project});
     }).catch(err => {
       console.log(err);
     })
