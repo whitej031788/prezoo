@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Redux from 'redux';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './Attendee.css';
 import io from 'socket.io-client';
 import { receivePresentation }  from '../actions/presentationActions';
@@ -14,6 +14,7 @@ import ButtonLoader from './shared/ButtonLoader';
 import { receiveUser } from '../actions/userActions';
 import ProjectService from '../services/projectService';
 import StorageService from '../services/storageService';
+import { Editor, EditorState } from 'draft-js';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IAttendeeProps {
@@ -31,7 +32,10 @@ interface IAttendeeState {
   userName: string,
   presentation: IPresentation,
   videoDom: HTMLVideoElement,
-  peerConnection: RTCPeerConnection
+  peerConnection: RTCPeerConnection,
+  handLoading: Boolean,
+  question: EditorState,
+  successMessage: string
 };
 
 class Attendee extends Component<IAttendeeProps, IAttendeeState> {
@@ -54,10 +58,16 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       validated: false,
       isFullScreen: false,
       userName: '',
-      socket: undefined
+      socket: undefined,
+      handLoading: false,
+      question: EditorState.createEmpty(),
+      successMessage: ''
     };
 
     this.joinRoom = this.joinRoom.bind(this);
+    this.raiseHand = this.raiseHand.bind(this);
+    this.onEditorChange = this.onEditorChange.bind(this);
+    this.submitQuestion = this.submitQuestion.bind(this);
   }
 
   componentWillMount() {
@@ -70,7 +80,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       self.setState({isFullScreen: fullScreenElement ? true : false}, function() {
         let message = self.state.isFullScreen ? 'Went full screen' : 'Exit full screen';
         if (self.state.socket) {
-          self.state.socket.emit('chatMessage', { timestamp: new Date(), sender: self.props.user.userName, message: message });
+          self.state.socket.emit('chatMessage', { timestamp: new Date(), sender: self.props.user.userName + ' - Guest', message: message });
         }
       });
     };
@@ -96,6 +106,38 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
 
   componentDidUpdate() {
     StorageService.setPresLocalStorage(this.props.guid, this.props);
+  }
+
+  onEditorChange(editorState: EditorState) {
+    this.setState({
+      question: editorState
+    });
+  }
+
+  submitQuestion() {
+    let self = this;
+
+    let message = "❓❓❓: " + this.state.question.getCurrentContent().getPlainText('\u0001');
+    if (this.state.socket) {
+      this.state.socket.emit('chatMessage', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: message });
+    }
+    this.setState({
+      question: EditorState.createEmpty(), 
+      successMessage: "Your question has been submitted to the host"
+    }, () => {
+      setTimeout(function(){ self.setState({successMessage: ''}); }, 3000);
+    });
+  }
+
+  raiseHand() {
+    let self = this;
+
+    this.setState({handLoading: true});
+    if (this.state.socket) {
+      let message = "✋ Raised hand ✋";
+      this.state.socket.emit('chatMessage', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: message });
+      setTimeout(function(){ self.setState({handLoading: false}); }, 3000);
+    }
   }
 
   socket() {
@@ -217,6 +259,11 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     const username = this.props.user.userName;
     let appliedClass = username ? "" : "vertical-center";
 
+    let handText = (<span>Raise your hand</span>);
+    if (this.state.handLoading) {
+      handText = (<span>&#10003;</span>);
+    }
+
     const joinUser = !username ? (
       <Col md={{span: 6, offset: 3}} xs="12">
         <Form noValidate validated={this.state.validated} onSubmit={this.joinRoom}>
@@ -233,7 +280,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     ) : null;
     const slideShow = username ? (
       <Row>
-        <Col md="9">
+        <Col md="9" id="full-screen-target">
           <SlideShow 
           slideNumber={this.props.presentation.slideNumber} 
           project={this.state.project} 
@@ -243,14 +290,19 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
           goFullScreen={this.goFullScreen}
         /> 
         </Col>
-        <Col md="3">
-          <video className="host-camera" playsInline autoPlay muted></video>
+        <Col md="3" className="text-center">
+          <video className="host-camera" style={{width: '70%', height: 'auto'}} playsInline autoPlay muted></video>
+          <Button onClick={this.raiseHand} type="button" className="w-100 mt-2 mb-2">{handText}</Button>
+          <Editor placeholder={'Submit a question'} editorState={this.state.question} onChange={this.onEditorChange} />
+          <Button onClick={this.submitQuestion} type="button" className="w-100 mt-2 mb-2">Submit Question</Button>
+          <Col md="12" className="alert-success mt-2">{this.state.successMessage}</Col>
+          <Button onClick={this.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>
         </Col>
       </Row>
 
     ) : null;
     return (
-      <div className={"component-root " + appliedClass} id="full-screen-target">
+      <div className={"component-root " + appliedClass}>
         <Container fluid>
           {this.state.project && (
           <Row>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Carousel, Button } from 'react-bootstrap';
+import { Carousel } from 'react-bootstrap';
 import './SlideShow.css';
 import { IProject } from '../../interfaces/IProject';
 
@@ -68,8 +68,6 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
         classesToApply = "carouselWrapper";
       }
 
-      let showButton = !this.props.isFullScreen && this.props.isAttendeeView;
-
       el = (
         <div>
           <div className={classesToApply} style={this.props.styles ? this.props.styles : undefined}>
@@ -84,7 +82,6 @@ class SlideShow extends Component<ISlideShowProps, ISlideShowState> {
             >
               {presentationSlides}
             </Carousel>
-            {showButton && (<Button onClick={this.props.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
           </div>
           {this.props.showControls && (<ol className="prezoo-carousel-indicators">{slideIndicators}</ol>)}
         </div>)

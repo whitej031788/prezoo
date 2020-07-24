@@ -8,3 +8,7 @@
 .carouselWrapper img {
   height: 100%;
 }
+
+#full-screen-target:fullscreen {
+  background-color: #ececec;
+}

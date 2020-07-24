@@ -81,6 +81,10 @@ class Chat extends Component<IChatProps, IChatState> {
   handleClick(event: React.FormEvent) {
     event.preventDefault();
 
+    if (!this.state.message?.trim()) {
+      return;
+    }
+
     const username = this.props.user.userName;
 
     // send message
