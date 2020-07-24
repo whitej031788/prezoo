@@ -119,18 +119,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
     return (
       <div className="component-root">
         <Container>
-          <h1 className="route-title">Project Upload</h1>
-          <Row>
-            <Col md={{span: 10, offset: 1}}>
-              <p>Actions</p>
-              <ol>
-                <li>Share your co-host link with collaborators and hit preview to get your presentation ready</li>
-                <li>Share the "viewee" link to give guests a presentation views of your slides</li>
-                <li>Alternatively, open your presentation mode from the hosts view and share over your video collaboration tool</li>
-                <li>Chat and co-host with colleagues through our "host view" for a seamless presentation experience</li>
-              </ol>
-            </Col>
-          </Row>
+          <h1 className="route-title mb-4">Project Upload</h1>
           {this.state.project && (
           <Row>
             <Col md="8" className="text-center">

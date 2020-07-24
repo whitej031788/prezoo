@@ -101,7 +101,12 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     this.setState({
       videoDom: document.querySelector("video") as HTMLVideoElement,
       socket: io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.guid) as string)
-    }, () => this.socket());
+    }, () => {
+      if (this.state.socket) {
+        this.state.socket.emit('chatJoin', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: 'joined' });
+      }
+      this.socket();
+    });
   }
 
   componentDidUpdate() {
@@ -116,8 +121,12 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
 
   submitQuestion() {
     let self = this;
+    let questionText = this.state.question.getCurrentContent().getPlainText('\u0001');
+    if (!questionText.trim()) {
+      return;
+    }
 
-    let message = "❓❓❓: " + this.state.question.getCurrentContent().getPlainText('\u0001');
+    let message = "❓❓❓: " + questionText;
     if (this.state.socket) {
       this.state.socket.emit('chatMessage', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: message });
     }

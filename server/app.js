@@ -47,7 +47,7 @@ const server = app.listen(PORT, () => {
 const io = socketIo(server);
 
 let usersList = {};
-let broadcaster;
+let broadcasters = {};
 
 // Need a better way to do this than just in the JS memory
 // We are keeping a running tally by room of attendants; maybe firebase? Mongo? Redis?
@@ -71,6 +71,10 @@ function updateUserlist(action, sender, room) {
       }
     });
   }
+}
+
+function updateBroadcaster(guid, broadcaster) {
+  broadcasters[guid] = broadcaster;
 }
 
 io.on("connection", (socket) => {
@@ -112,29 +116,28 @@ io.on("connection", (socket) => {
   });
 
   socket.on("broadcaster", () => {
-    broadcaster = socket.id;
-    socket.broadcast.emit("broadcaster");
+    updateBroadcaster(socket.handshake.query.projectGuid, socket.id);
+    io.sockets.in("room-" + socket.handshake.query.projectGuid).emit("broadcaster");
   });
 
   socket.on("watcher", () => {
-    socket.to(broadcaster).emit("watcher", socket.id);
+    io.sockets.to(broadcasters[socket.handshake.query.projectGuid]).emit("watcher", socket.id);
   });
 
   socket.on("disconnect", () => {
-    console.log("Disconnect");
-    socket.to(broadcaster).emit("disconnectPeer", socket.id);
+    io.sockets.to(broadcasters[socket.handshake.query.projectGuid]).emit("disconnectPeer", socket.id);
   });
 
   socket.on("offer", (id, message) => {
-    socket.to(id).emit("offer", socket.id, message);
+    io.sockets.to(id).emit("offer", socket.id, message);
   });
 
   socket.on("answer", (id, message) => {
-    socket.to(id).emit("answer", socket.id, message);
+    io.sockets.to(id).emit("answer", socket.id, message);
   });
 
   socket.on("candidate", (id, message) => {
-    socket.to(id).emit("candidate", socket.id, message);
+    io.sockets.to(id).emit("candidate", socket.id, message);
   });
 });
 
