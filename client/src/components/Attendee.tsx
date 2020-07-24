@@ -25,7 +25,7 @@ interface IAttendeeProps {
 
 interface IAttendeeState {
   project?: IProject,
-  socket: SocketIOClient.Socket,
+  socket?: SocketIOClient.Socket,
   validated: boolean,
   isFullScreen: boolean,
   userName: string,
@@ -54,7 +54,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       validated: false,
       isFullScreen: false,
       userName: '',
-      socket: io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.guid) as string)
+      socket: undefined
     };
 
     this.joinRoom = this.joinRoom.bind(this);
@@ -69,7 +69,9 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       let fullScreenElement = document.fullscreenElement;
       self.setState({isFullScreen: fullScreenElement ? true : false}, function() {
         let message = self.state.isFullScreen ? 'Went full screen' : 'Exit full screen';
-        self.state.socket.emit('chatMessage', { timestamp: new Date(), sender: self.props.user.userName, message: message });
+        if (self.state.socket) {
+          self.state.socket.emit('chatMessage', { timestamp: new Date(), sender: self.props.user.userName, message: message });
+        }
       });
     };
   }
@@ -87,7 +89,8 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     }
 
     this.setState({
-      videoDom: document.querySelector("video") as HTMLVideoElement
+      videoDom: document.querySelector("video") as HTMLVideoElement,
+      socket: io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.guid) as string)
     }, () => this.socket());
   }
 
@@ -96,59 +99,70 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
   }
 
   socket() {
-    this.state.socket.on('changeSlide', (msg: number) => {
-      this.props.dispatch(receivePresentation(msg));
-    });
+    if (this.state.socket) {
+      this.state.socket.on('changeSlide', (msg: number) => {
+        this.props.dispatch(receivePresentation(msg));
+      });
 
-    this.state.socket.on("offer", (id: string, description: RTCSessionDescriptionInit) => {
-      let peerConnTemp = this.state.peerConnection;
+      this.state.socket.on("offer", (id: string, description: RTCSessionDescriptionInit) => {
+        let peerConnTemp = this.state.peerConnection;
 
-      peerConnTemp
-        .setRemoteDescription(description)
-        .then(() => this.state.peerConnection.createAnswer())
-        .then(sdp => this.state.peerConnection.setLocalDescription(sdp))
-        .then(() => {
-          this.state.socket.emit("answer", id, this.state.peerConnection.localDescription);
-        });
+        peerConnTemp
+          .setRemoteDescription(description)
+          .then(() => this.state.peerConnection.createAnswer())
+          .then(sdp => this.state.peerConnection.setLocalDescription(sdp))
+          .then(() => {
+            if (this.state.socket) {
+              this.state.socket.emit("answer", id, this.state.peerConnection.localDescription);
+            }
+          });
 
-      peerConnTemp.ontrack = event => {
-        let video = document.querySelector("video") as HTMLVideoElement;
-        if (video) {
-          video.srcObject = event.streams[0];
-          this.setState({videoDom: video});
+        peerConnTemp.ontrack = event => {
+          let video = document.querySelector("video") as HTMLVideoElement;
+          if (video) {
+            video.srcObject = event.streams[0];
+            this.setState({videoDom: video});
+          }
+        };
+
+        peerConnTemp.onicecandidate = event => {
+          if (event.candidate && this.state.socket) {
+            this.state.socket.emit("candidate", id, event.candidate);
+          }
+        };
+
+        this.setState({peerConnection: peerConnTemp});
+      });
+
+      this.state.socket.on("candidate", (id: string, candidate: RTCIceCandidateInit | undefined) => {
+        this.state.peerConnection
+          .addIceCandidate(new RTCIceCandidate(candidate))
+          .catch(e => console.error(e));
+      });
+      
+      this.state.socket.on("connect", () => {
+        if (this.state.socket) {
+          this.state.socket.emit("watcher");
+        }
+      });
+      
+      this.state.socket.on("broadcaster", () => {
+        if (this.state.socket) {
+          this.state.socket.emit("watcher");
+        }
+      });
+      
+      this.state.socket.on("disconnectPeer", () => {
+        this.state.peerConnection.close();
+      });
+      
+      window.onunload = window.onbeforeunload = () => {
+        if (this.state.socket) {
+          this.state.socket.emit('chatLeave', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: 'left' });
+          this.state.socket.close();
         }
       };
-
-      peerConnTemp.onicecandidate = event => {
-        if (event.candidate) {
-          this.state.socket.emit("candidate", id, event.candidate);
-        }
-      };
-
-      this.setState({peerConnection: peerConnTemp});
-    });
-
-    this.state.socket.on("candidate", (id: string, candidate: RTCIceCandidateInit | undefined) => {
-      this.state.peerConnection
-        .addIceCandidate(new RTCIceCandidate(candidate))
-        .catch(e => console.error(e));
-    });
-    
-    this.state.socket.on("connect", () => {
-      this.state.socket.emit("watcher");
-    });
-    
-    this.state.socket.on("broadcaster", () => {
-      this.state.socket.emit("watcher");
-    });
-    
-    this.state.socket.on("disconnectPeer", () => {
-      this.state.peerConnection.close();
-    });
-    
-    window.onunload = window.onbeforeunload = () => {
-      this.state.socket.close();
-    };
+    }
   }
 
   goFullScreen(event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -189,7 +203,9 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     if (form.checkValidity() === false) {
       event.stopPropagation();
     } else {
-      this.state.socket.emit('chatJoin', { timestamp: new Date(), sender: this.state.userName + ' - Guest', message: 'joined' });
+      if (this.state.socket) {
+        this.state.socket.emit('chatJoin', { timestamp: new Date(), sender: this.state.userName + ' - Guest', message: 'joined' });
+      }
       this.props.dispatch(receiveUser(this.state.userName));
       this.goFullScreen(undefined);
     }

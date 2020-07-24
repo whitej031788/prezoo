@@ -8,7 +8,7 @@ import { IUser } from '../../interfaces/IUser';
 interface IChatAreaProps {
   user: IUser,
   projectGuid: string,
-  socket: SocketIOClient.Socket
+  socket?: SocketIOClient.Socket
 };
 
 interface IChatAreaState {};

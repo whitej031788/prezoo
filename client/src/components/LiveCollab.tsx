@@ -1,11 +1,14 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Tabs, Tab } from 'react-bootstrap';
+import Redux from 'redux';
+import { Container, Row, Col, Tabs, Tab, Button } from 'react-bootstrap';
 import './LiveCollab.css';
 import io from 'socket.io-client';
 import { receivePresentation }  from '../actions/presentationActions';
 import { receiveUser}  from '../actions/userActions';
 import { IProject } from '../interfaces/IProject';
 import { ISlide } from '../interfaces/ISlide';
+import { IUser } from '../interfaces/IUser';
+import { IPresentation } from '../interfaces/IPresentation';
 import SlideShow from './shared/SlideShow';
 import CopyText from './shared/CopyText';
 import ChatArea from './chat/ChatArea';
@@ -19,8 +22,9 @@ import { RootState } from "../reducers";
 // TypeScript, define the properties and state we expect passed to this component
 interface ILiveCollabProps {
   guid: string,
-  dispatch: any,
-  presentation: {slideNumber: number},
+  dispatch: Redux.Dispatch,
+  presentation: IPresentation,
+  user: IUser
 };
 
 interface ILiveCollabState {
@@ -28,7 +32,7 @@ interface ILiveCollabState {
   project?: IProject,
   elapsedTime: number,
   elapsedTimeDisplay: string,
-  socket: SocketIOClient.Socket,
+  socket?: SocketIOClient.Socket,
   presentation: {slideNumber: number},
   notes: {[key: number]: EditorState},
   videoDom: HTMLVideoElement,
@@ -46,7 +50,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
       elapsedTime: 0,
       elapsedTimeDisplay: '',
       presentation: {slideNumber: 0},
-      socket: io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.guid) as string),
+      socket: undefined,
       notes: {0: EditorState.createEmpty()}
     };
 
@@ -67,7 +71,10 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
 
   componentWillMount() {
     window.onunload = window.onbeforeunload = () => {
-      this.state.socket.close();
+      if (this.state.socket) {
+        this.state.socket.emit('chatLeave', { timestamp: new Date(), sender: this.props.user.userName, message: 'left' });
+        this.state.socket.close();
+      }
     }
     this.getSlides();
   }
@@ -84,7 +91,8 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
     }
 
     this.setState({
-      videoDom: document.querySelector("video") as HTMLVideoElement
+      videoDom: document.querySelector("video") as HTMLVideoElement,
+      socket: io((process.env.REACT_APP_WS_URL + '?projectGuid=' + this.props.guid) as string)
     }, () => this.socket());
   }
 
@@ -93,72 +101,74 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   }
 
   socket() {
-    this.state.socket.on('changeSlide', (msg: number) => {
-      this.props.dispatch(receivePresentation(msg));
-    });
+    if (this.state.socket) {
+      this.state.socket.on('changeSlide', (msg: number) => {
+        this.props.dispatch(receivePresentation(msg));
+      });
 
-    this.state.socket.on("watcher", (id: number) => {
-      const config = {
-        iceServers: [
-          {
-            urls: ["stun:stun.l.google.com:19302"]
+      this.state.socket.on("watcher", (id: number) => {
+        const config = {
+          iceServers: [
+            {
+              urls: ["stun:stun.l.google.com:19302"]
+            }
+          ]
+        };
+        let peerConnectionsTemp = this.state.peerConnections;
+        const peerConnection = new RTCPeerConnection(config);
+        peerConnectionsTemp[id] = peerConnection;
+        this.setState({peerConnections: peerConnectionsTemp});
+      
+        let stream = this.state.videoDom.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
+        peerConnection.onicecandidate = event => {
+          if (event.candidate && this.state.socket) {
+            this.state.socket.emit("candidate", id, event.candidate);
           }
-        ]
-      };
-      let peerConnectionsTemp = this.state.peerConnections;
-      const peerConnection = new RTCPeerConnection(config);
-      peerConnectionsTemp[id] = peerConnection;
-      this.setState({peerConnections: peerConnectionsTemp});
-    
-      let stream = this.state.videoDom.srcObject as MediaStream;
-      stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
-      peerConnection.onicecandidate = event => {
-        if (event.candidate) {
-          this.state.socket.emit("candidate", id, event.candidate);
-        }
-      };
-    
-      peerConnection
-        .createOffer()
-        .then(sdp => peerConnection.setLocalDescription(sdp))
-        .then(() => {
-          this.state.socket.emit("offer", id, peerConnection.localDescription);
-        });
-    });
-    
-    this.state.socket.on("answer", (id: string, description: string) => {
-      this.state.peerConnections[id].setRemoteDescription(description);
-    });
-    
-    this.state.socket.on("candidate", (id: string, candidate: RTCIceCandidateInit | undefined) => {
-      this.state.peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
-    });
+        };
+      
+        peerConnection
+          .createOffer()
+          .then(sdp => peerConnection.setLocalDescription(sdp))
+          .then(() => {
+            if (this.state.socket) {
+              this.state.socket.emit("offer", id, peerConnection.localDescription);
+            }
+          });
+      });
+      
+      this.state.socket.on("answer", (id: string, description: string) => {
+        this.state.peerConnections[id].setRemoteDescription(description);
+      });
+      
+      this.state.socket.on("candidate", (id: string, candidate: RTCIceCandidateInit | undefined) => {
+        this.state.peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
+      });
 
-    this.state.socket.on("disconnectPeer", (id: string) => {
-      console.log(this.state.peerConnections);
-      console.log(id);
-      if (this.state.peerConnections[id]) {
+      this.state.socket.on("disconnectPeer", (id: string) => {
         this.state.peerConnections[id].close();
         delete this.state.peerConnections[id];
-      }
-    });
+      });
 
-    // Media contrains
-    const constraints = {
-      video: { facingMode: "user" }
-      // Uncomment to enable audio
-      // audio: true,
-    };
+      // Media contrains
+      const constraints = {
+        video: { facingMode: "user" }
+        // Uncomment to enable audio
+        // audio: true,
+      };
 
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(stream => {
-        let video = document.querySelector("video") as HTMLVideoElement;
-        video.srcObject = stream;
-        this.setState({videoDom: video});
-        this.state.socket.emit("broadcaster");
-      })
-      .catch(error => console.error(error));
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(stream => {
+          let video = document.querySelector("video") as HTMLVideoElement;
+          video.srcObject = stream;
+          this.setState({videoDom: video});
+          if (this.state.socket) {
+            this.state.socket.emit("broadcaster");
+          }
+        })
+        .catch(error => console.error(error));
+    }
   }
   
   onSlideSelect(index: number) {
@@ -183,7 +193,9 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
     }).catch(err => {
       console.log(err);
     })*/
-    this.state.socket.emit('changeSlide', index );
+    if (this.state.socket) {
+      this.state.socket.emit('changeSlide', index );
+    }
   }
 
   changeTab(selectedTab: string) {
@@ -254,14 +266,18 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
             <Col md="8" className="text-center">
               <h1 className="route-title">{this.state.project.projectName}</h1>
               <Row>
-                <Col md="12">
-                <Tabs defaultActiveKey="slide-show" id="live-collab-controls" onSelect={this.changeTab}>
-                  <Tab eventKey="slide-show" title="Slide Show">
-                  </Tab>
-                  {/* <Tab eventKey="web-browser" title="Web Browser">
-                  </Tab> */}
-                </Tabs>
+                <Col md="4">
+                  <Tabs defaultActiveKey="slide-show" id="live-collab-controls" onSelect={this.changeTab}>
+                    <Tab eventKey="slide-show" title="Slide Show">
+                    </Tab>
+                    {/* <Tab eventKey="web-browser" title="Web Browser">
+                    </Tab> */}
+                  </Tabs>
                 </Col>
+                <Col md="4">
+                  <span>Attendee Link:</span> <CopyText theText={shareLinkAttend} />
+                </Col>
+                <Col md="4">{this.state.elapsedTimeDisplay}</Col>
               </Row>
               <SlideShow styles={{height: '350px'}} slideNumber={this.props.presentation.slideNumber} onSlideSelect={this.onSlideSelect} project={this.state.project} showControls={true} />
               <Editor placeholder={'Enter your notes here'} editorState={this.state.notes[this.props.presentation.slideNumber]} onChange={this.onEditorChange} />
@@ -276,14 +292,15 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
                 </Col>
               </Row>
               <Row>
-                <Col md="6">
-                  <span>Attendee Link:</span> <CopyText theText={shareLinkAttend} />
+                <Col md="12" className="prezooBorder">
+                  <ChatArea socket={this.state.socket} projectGuid={this.props.guid} />
                 </Col>
-                <Col md="6">{this.state.elapsedTimeDisplay}</Col>
               </Row>
-              <Col md="12" className="prezooBorder">
-                <ChatArea socket={this.state.socket} projectGuid={this.props.guid} />
-              </Col>
+              <Row>
+                <Col md="12" className="mt-5 mb-5 text-center">
+                  <Button type="button">Wrap Up</Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           )}

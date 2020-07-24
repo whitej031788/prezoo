@@ -121,6 +121,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    console.log("Disconnect");
     socket.to(broadcaster).emit("disconnectPeer", socket.id);
   });
 
