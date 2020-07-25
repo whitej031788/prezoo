@@ -21,9 +21,25 @@ const PresentationController = () => {
     return result;
   }
 
+  const updatePresentation = async (req, res, next) => {
+    try {
+      const presentation = await model.Presentation.findOne({ where: { id: parseInt(req.params.presentationId) }});
+      if (presentation) {
+        await presentation.update(req.body);
+        return res.status(200).send(presentation);
+      } else {
+        return res.status(500).send("Cannot find presentation");
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+
   return {
     createPresentation,
-    generateCollabCode
+    generateCollabCode,
+    updatePresentation
   };
 };
 

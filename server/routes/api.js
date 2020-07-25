@@ -2,6 +2,7 @@
 
 const projectCtrl = require('../controllers/ProjectCtrl');
 const slideCtrl = require('../controllers/SlideCtrl');
+const presentationCtrl = require('../controllers/PresentationCtrl');
 
 module.exports = (router) => {
   // Project Controller Routes
@@ -13,6 +14,9 @@ module.exports = (router) => {
 
   router.route('/project/update/:projectId')
     .put(projectCtrl().updateProject);
+
+  router.route('/presentation/update/:presentationId')
+    .put(presentationCtrl().updatePresentation);
 
   // Slide Controller Routes
   router.route('/slide/notes')

@@ -6,6 +6,7 @@ import io from 'socket.io-client';
 import { receivePresentation }  from '../actions/presentationActions';
 import { IProject } from '../interfaces/IProject';
 import { IPresentation } from '../interfaces/IPresentation';
+import { IProjectPresentation } from '../interfaces/IProjectPresentation';
 import { RootState } from "../reducers";
 import { IUser } from '../interfaces/IUser';
 import SlideShow from './shared/SlideShow';
@@ -30,7 +31,7 @@ interface IAttendeeState {
   validated: boolean,
   isFullScreen: boolean,
   userName: string,
-  presentation: IPresentation,
+  projectPresentation?: IProjectPresentation,
   videoDom: HTMLVideoElement,
   peerConnection: RTCPeerConnection,
   handLoading: Boolean,
@@ -52,7 +53,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
 
     this.state = { 
       project: undefined,
-      presentation: {slideNumber: 0},
+      projectPresentation: undefined,
       videoDom: document.querySelector("video") as HTMLVideoElement,
       peerConnection: new RTCPeerConnection(config),
       validated: false,
@@ -241,7 +242,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
   getSlides() {
     ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
-      this.setState({project: res.data.project});
+      this.setState({project: res.data.project, projectPresentation: res.data.presentation});
     }).catch(err => {
       console.log(err);
     })
@@ -277,6 +278,11 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       </>
     );
 
+    let enableSettings = {
+      enableQuestions: this.state.projectPresentation && this.state.projectPresentation.enableQuestions,
+      enableReactions: this.state.projectPresentation && this.state.projectPresentation.enableReactions
+    }
+
     let handText = (<span>Raise your hand</span>);
     if (this.state.handLoading) {
       handText = (<span>&#10003;</span>);
@@ -310,8 +316,8 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
         </Col>
         <Col md="3" className="text-center">
           {videoJsx}
-          <Button onClick={this.raiseHand} type="button" className="w-100 mt-2 mb-2">{handText}</Button>
-          {!this.state.isFullScreen && questionJsx}
+          {enableSettings.enableReactions && (<Button onClick={this.raiseHand} type="button" className="w-100 mt-2 mb-2">{handText}</Button>)}
+          {(!this.state.isFullScreen && enableSettings.enableQuestions) && questionJsx}
           {!this.state.isFullScreen && (<Button onClick={this.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
         </Col>
       </Row>

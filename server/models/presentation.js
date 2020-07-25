@@ -24,6 +24,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     collabCode: {
       type: DataTypes.STRING
+    },
+    enableQuestions: {
+      type: DataTypes.BOOLEAN, 
+      allowNull: false, 
+      defaultValue: true
+    },
+    enableReactions: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false, 
+      defaultValue: true
     }
   }, {
     tableName: 'presentations'
