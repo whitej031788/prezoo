@@ -266,14 +266,14 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
             <Col md="8" className="text-center">
               <h1 className="route-title">{this.state.project.projectName}</h1>
               <Row>
-                <Col md="4">
+                {/* <Col md="4">
                   <Tabs defaultActiveKey="slide-show" id="live-collab-controls" onSelect={this.changeTab}>
                     <Tab eventKey="slide-show" title="Slide Show">
                     </Tab>
-                    {/* <Tab eventKey="web-browser" title="Web Browser">
-                    </Tab> */}
+                    <Tab eventKey="web-browser" title="Web Browser">
+                    </Tab>
                   </Tabs>
-                </Col>
+                </Col> */}
                 <Col md="4">
                   <span>Attendee Link:</span> <CopyText theText={shareLinkAttend} />
                 </Col>
@@ -287,9 +287,9 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
                 <Col md="6" className="text-center">
                   <video className="host-camera" playsInline autoPlay muted></video>
                 </Col>
-                <Col md="6" className="text-center">
+                {/* <Col md="6" className="text-center">
                   {slidePreview}
-                </Col>
+                </Col> */}
               </Row>
               <Row>
                 <Col md="12" className="prezooBorder">

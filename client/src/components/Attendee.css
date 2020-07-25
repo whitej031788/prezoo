@@ -12,3 +12,11 @@
 #full-screen-target:fullscreen {
   background-color: #ececec;
 }
+
+/* Put host view in top right corner for full screen */
+.currently-full-screen video {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 200px !important;
+}

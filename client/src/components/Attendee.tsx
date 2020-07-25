@@ -267,6 +267,15 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
   render() {
     const username = this.props.user.userName;
     let appliedClass = username ? "" : "vertical-center";
+    let fullScreenClass = this.state.isFullScreen ? "currently-full-screen" : "";
+    let videoJsx = (<video className="host-camera" style={{width: '70%', height: 'auto'}} playsInline autoPlay muted></video>);
+    let questionJsx = (
+      <>
+        <Editor placeholder={'Submit a question'} editorState={this.state.question} onChange={this.onEditorChange} />
+        <Button onClick={this.submitQuestion} type="button" className="w-100 mt-2 mb-2">Submit Question</Button>
+        <Col md="12" className="alert-success mt-2">{this.state.successMessage}</Col>
+      </>
+    );
 
     let handText = (<span>Raise your hand</span>);
     if (this.state.handLoading) {
@@ -288,24 +297,22 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       </Col>
     ) : null;
     const slideShow = username ? (
-      <Row>
-        <Col md="9" id="full-screen-target">
+      <Row id="full-screen-target">
+        <Col md="9">
           <SlideShow 
-          slideNumber={this.props.presentation.slideNumber} 
-          project={this.state.project} 
-          showControls={false}
-          isFullScreen={this.state.isFullScreen}
-          isAttendeeView={true}
-          goFullScreen={this.goFullScreen}
-        /> 
+            slideNumber={this.props.presentation.slideNumber} 
+            project={this.state.project} 
+            showControls={false}
+            isFullScreen={this.state.isFullScreen}
+            isAttendeeView={true}
+            goFullScreen={this.goFullScreen}
+          />
         </Col>
         <Col md="3" className="text-center">
-          <video className="host-camera" style={{width: '70%', height: 'auto'}} playsInline autoPlay muted></video>
+          {videoJsx}
           <Button onClick={this.raiseHand} type="button" className="w-100 mt-2 mb-2">{handText}</Button>
-          <Editor placeholder={'Submit a question'} editorState={this.state.question} onChange={this.onEditorChange} />
-          <Button onClick={this.submitQuestion} type="button" className="w-100 mt-2 mb-2">Submit Question</Button>
-          <Col md="12" className="alert-success mt-2">{this.state.successMessage}</Col>
-          <Button onClick={this.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>
+          {!this.state.isFullScreen && questionJsx}
+          {!this.state.isFullScreen && (<Button onClick={this.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
         </Col>
       </Row>
 
@@ -315,7 +322,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
         <Container fluid>
           {this.state.project && (
           <Row>
-            <Col md="12" className="text-center">
+            <Col md="12" className={"text-center " + fullScreenClass}>
               {joinUser}
               {slideShow}
             </Col>
