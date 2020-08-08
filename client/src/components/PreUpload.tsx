@@ -63,6 +63,7 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
   getSlides() {
     ProjectService.getSlides(this.props.guid)
     .then(res => { // then print response status
+      console.log(res);
       this.setState({
         project: res.data.project,
         collabCode: res.data.presentation.collabCode,

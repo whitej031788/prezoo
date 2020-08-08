@@ -35,6 +35,7 @@ interface IAttendeeState {
   videoDom: HTMLVideoElement,
   peerConnection: RTCPeerConnection,
   handLoading: Boolean,
+  clapLoading: Boolean,
   question: EditorState,
   successMessage: string
 };
@@ -61,12 +62,14 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       userName: '',
       socket: undefined,
       handLoading: false,
+      clapLoading: false,
       question: EditorState.createEmpty(),
       successMessage: ''
     };
 
     this.joinRoom = this.joinRoom.bind(this);
     this.raiseHand = this.raiseHand.bind(this);
+    this.clap = this.clap.bind(this);
     this.onEditorChange = this.onEditorChange.bind(this);
     this.submitQuestion = this.submitQuestion.bind(this);
   }
@@ -147,6 +150,17 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       let message = "✋ Raised hand ✋";
       this.state.socket.emit('chatMessage', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: message });
       setTimeout(function(){ self.setState({handLoading: false}); }, 3000);
+    }
+  }
+
+  clap() {
+    let self = this;
+
+    this.setState({clapLoading: true});
+    if (this.state.socket) {
+      let message = "👏 Clap 👏";
+      this.state.socket.emit('chatMessage', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: message });
+      setTimeout(function(){ self.setState({clapLoading: false}); }, 3000);
     }
   }
 
@@ -283,9 +297,14 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       enableReactions: this.state.projectPresentation && this.state.projectPresentation.enableReactions
     }
 
-    let handText = (<span>Raise your hand</span>);
+    let handText = (<span>✋ Raise your hand</span>);
     if (this.state.handLoading) {
       handText = (<span>&#10003;</span>);
+    }
+
+    let clapText = (<span>👏 Clap</span>);
+    if (this.state.clapLoading) {
+      clapText = (<span>&#10003;</span>);
     }
 
     const joinUser = !username ? (
@@ -317,6 +336,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
         <Col md="3" className="text-center">
           {videoJsx}
           {enableSettings.enableReactions && (<Button onClick={this.raiseHand} type="button" className="w-100 mt-2 mb-2">{handText}</Button>)}
+          {enableSettings.enableReactions && (<Button onClick={this.clap} type="button" className="w-100 mt-2 mb-2">{clapText}</Button>)}
           {(!this.state.isFullScreen && enableSettings.enableQuestions) && questionJsx}
           {!this.state.isFullScreen && (<Button onClick={this.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
         </Col>
