@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 import Home from "./components/Home";
-import UseCases from "./components/UseCases";
+import HowItWorks from "./components/HowItWorks";
 import AboutUs from "./components/AboutUs";
 import Pricing from "./components/Pricing";
 import WhiteLabel from "./components/WhiteLabel";
@@ -33,16 +33,10 @@ const HomeNavRoute = ({ component: Component, ...rest }: any) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <Link to="/use-cases">Use Cases</Link>
+            <Link to="/how-it-works">How it Works</Link>
           </Nav>
           <Nav>
             <Link to="/about-us">About Us</Link>
-          </Nav>
-          <Nav>
-            <Link to="/pricing">Pricing</Link>
-          </Nav>
-          <Nav>
-            <Link to="/white-label">White Label</Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -57,10 +51,8 @@ class App extends Component {
       <Router>
         <Switch>
           <HomeNavRoute exact path="/" component={Home} />
-          <HomeNavRoute exact path="/use-cases" component={UseCases} />
+          <HomeNavRoute exact path="/how-it-works" component={HowItWorks} />
           <HomeNavRoute exact path="/about-us" component={AboutUs} />
-          <HomeNavRoute exact path="/pricing" component={Pricing} />
-          <HomeNavRoute exact path="/white-label" component={WhiteLabel} />
           <Route exact path="/pre-prezoo/upload/:guid" render={( {match}: ChildComponentProps) => (
             <><AppNav /><PreUpload guid={match.params.guid} /></> )} />
           <Route exact path="/pre-prezoo/edit/:guid" render={( {match}: ChildComponentProps) => (

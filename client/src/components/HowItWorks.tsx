@@ -8,7 +8,7 @@ class UseCases extends Component {
         <Row>
           <Container className="p-5">
             <Col md={{span: 10, offset: 1}}>
-              <h1 className="main-title">Use Cases</h1>
+              <h1 className="main-title">How It Works</h1>
             </Col>
           </Container>
         </Row>
