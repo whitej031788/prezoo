@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import Dropzone from 'react-dropzone';
 import './Home.css';
 import { withRouter, RouteComponentProps } from "react-router-dom";
@@ -99,11 +99,15 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
                   </Col>
                 )}
               </Dropzone>
+                <div>
+                <a href="/images/SampleDeck.pdf" download draggable><span>Example Presentation</span></a>
+                </div>
               <Col md="12" className="mt-4 backgroundImagePresent">
               </Col>
               <Col md={{span: 8, offset: 2}} className="mt-3">
                 <p className="text-center" style={{fontStyle: 'italic'}}>“We should just stop calling these things presentations altogether. Everyone gets hung up on that word. Wouldn’t it be easier to just call them conversations? That’s really what they are.”</p>
               </Col>
+              
             </Col>
           </Container>
         </Row>
