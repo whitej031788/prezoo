@@ -1,20 +1,85 @@
 .main-title {
-  font-family: 'Acme', sans-serif;
-  margin-bottom: 24px;
-  font-size: 50px;
-  font-weight: 900;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 60px;
+  font-size: 40px;
+  /* or 106% */
+  color: white;
+  text-align: center;
+}
+
+.sub-text {
+  font-style: normal;
+  font-weight: normal;
+  line-height: 30px;
+  /* or 133% */
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.main-logo-home {
+  width: 50px;
+  height: auto;
+}
+
+.white-bold-text {
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
 }
 
 .dropzone > div {
   height: 100%;
   width: 100%;
+  padding: 15px;
 }
 
-.backgroundImagePresent {
+.dropzone {
+  border: 3px dashed #535766;
+  box-sizing: border-box;
+  border-radius: 20px;
+  cursor: pointer;
+  padding: 10px;
+}
+
+/* .backgroundImagePresent {
   background: url('/images/teemu-paananen-bzdhc5b3Bxs-unsplash.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
   -o-background-size: cover;
   height: 400px;
+} */
+
+@media screen and (min-width: 768px) {
+  #top-left-home-img {
+    position: fixed;
+    width: 250px;
+    height: auto;
+    left: 0px;
+    top: 0px;
+  }
+  #mid-right-home-img {
+    position: fixed;
+    width: 200px;
+    height: auto;
+    right: 0px;
+    top: 100px;
+  }
+  #bot-left-mid-home-img {
+    position: fixed;
+    width: 327px;
+    height: auto;
+    left: 100px;
+    bottom: 0px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  #mid-right-home-img {
+    display: none;
+  }
+  #bot-left-mid-home-img {
+    display: none;
+  }
 }

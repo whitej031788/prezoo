@@ -5,8 +5,8 @@ import { Navbar } from 'react-bootstrap';
 export default class AppNav extends Component<{}, {}> {
   render() {
     return (
-      <Navbar bg="white" expand="lg">
-        <Link to="/"><img src="/images/Prezoo_free-file.png" alt="Prezoo" className="brand-logo" /></Link>
+      <Navbar className="prez-back" expand="lg">
+        <Link to="/"><img src="/images/new-logo.png" alt="Prezoo" className="brand-logo" /></Link>
       </Navbar>
     )
   }

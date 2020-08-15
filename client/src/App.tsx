@@ -28,8 +28,8 @@ interface ChildComponentProps extends RouteComponentProps<MatchParams> {
 const HomeNavRoute = ({ component: Component, ...rest }: any) => {
   return (
     <div>
-      <Navbar bg="white" expand="lg">
-        <Link to="/"><img src="/images/Prezoo_free-file.png" alt="Prezoo" className="brand-logo" /></Link>
+      <Navbar className="prez-back" expand="lg">
+        <Link to="/"><img src="/images/new-logo.png" alt="Prezoo" className="brand-logo" /></Link>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">

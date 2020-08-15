@@ -75,38 +75,42 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
       <Container className="fill-home-screen" fluid>
         <Row>
           <Container className="p-5">
-            <Col md={{span: 10, offset: 1}} xs="12">
+            <Col md="12" className="text-center mb-2"><img src="/images/new-logo.png" alt="Prezoo" className="main-logo-home" /></Col>
+            <Col md={{span: 8, offset: 2}} xs="12">
               <h1 className="main-title">Presentations without the hassle</h1>
-              <Col md={{span: 8, offset: 2}} xs="12">
-                <p className="text-center">Control your presentations remotely as a team with collaborator notes and chat. Presenting remotely has never been so easy.</p>
+              <Col md={{span: 12, offset: 0}} xs="12">
+                <p className="text-center sub-text">Control your presentations remotely as a team with collaborator notes and chat. Presenting remotely has never been so easy.</p>
               </Col>
               {this.state.errorMessage && (
                 <Col md={{span: 8, offset: 2}} xs="12" className="alert-danger mb-2 p-2 text-center">{this.state.errorMessage}</Col>
               )}
               <Dropzone multiple={false} onDrop={this.onFileSelect}>
                 {({getRootProps, getInputProps}) => (
-                  <Col md={{span: 8, offset: 2}} sm="12" className="text-center">
-                    <section className="dropzone cta-prezoo-button">
+                  <Col md={{span: 6, offset: 3}} sm="12" className="text-center">
+                    <section className="dropzone">
                       <div {...getRootProps()}>
                         <input {...getInputProps()} />
                         <div>
                           <LoadingGif isLoading={this.state.isLoading} />
-                          {!this.state.isLoading && (<div><img src="/images/upload.png" alt="Upload" className="brand-logo" /><span>Upload your first finished project</span></div>)}
+                          {!this.state.isLoading && (<div><span className="white-bold-text">Upload a presentation</span></div>)}
                         </div>
                       </div>
                     </section>
-                    <div className="small-text mt-1">PDF files only</div>
+                    <div className="small-text mt-1">Click here or drop a PDF file</div>
                   </Col>
                 )}
               </Dropzone>
-              <Col md="12" className="mt-4 backgroundImagePresent">
-              </Col>
-              <Col md={{span: 8, offset: 2}} className="mt-3">
-                <p className="text-center" style={{fontStyle: 'italic'}}>“We should just stop calling these things presentations altogether. Everyone gets hung up on that word. Wouldn’t it be easier to just call them conversations? That’s really what they are.”</p>
-              </Col>
             </Col>
           </Container>
         </Row>
+        <div style={{width: '250px', position: 'absolute', right: '0px', top: '300px'}} className="hide-mobile">
+          <div className="prez-box"><div className="sub-head">Carlos</div><span>Would maybe change the background pic.</span></div>
+          <div className="prez-box"><div className="sub-head">Anon Zebra</div><span>👏</span></div>
+          <div className="prez-box"><div className="sub-head">Juan</div><span>This slide looks awesome! Good Job :)</span></div>
+        </div>
+        <img id="top-left-home-img" src="/images/teemu-paananen-bzdhc5b3Bxs-unsplash.jpg" className="hide-mobile" />
+        <img id="mid-right-home-img" src="/images/marcos-luiz-photograph-R6xx6fnvPT8-unsplash.jpg" className="hide-mobile" />
+        <img id="bot-left-mid-home-img" src="/images/home-color.png" className="hide-mobile" />
       </Container>
     );
   }
