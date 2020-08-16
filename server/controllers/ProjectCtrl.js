@@ -6,12 +6,12 @@ const PDFImage = require('pdf-image').PDFImage;
 const env = process.env.NODE_ENV;
 const storageConfig = require(__dirname + '/../config/storage.json')[env];
 const presentationCtrl = require('./PresentationCtrl');
-const Airtable = require('airtable');
+// const Airtable = require('airtable');
 
-const base = new Airtable({
-  apiKey: process.env.AIRTABLE_API_KEY,
-}).base(process.env.AIRTABLE_BASE_ID);
-const table = base('Beta Users');
+// const base = new Airtable({
+//   apiKey: process.env.AIRTABLE_API_KEY,
+// }).base(process.env.AIRTABLE_BASE_ID);
+// const table = base('Beta Users');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -123,20 +123,20 @@ const ProjectController = () => {
 
   const updateProject = async (req, res, next) => {
     const { projectName, ownerName, ownerEmail } = req.body;
-    table.create(
-      {
-        project_name: projectName,
-        Name: ownerName,
-        Email: ownerEmail
-      },
-      (err, record) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        req.body.id= record.getId();
-      }
-    )
+    // table.create(
+    //   {
+    //     project_name: projectName,
+    //     Name: ownerName,
+    //     Email: ownerEmail
+    //   },
+    //   (err, record) => {
+    //     if (err) {
+    //       console.log(err);
+    //       return;
+    //     }
+    //     req.body.id= record.getId();
+    //   }
+    // )
     try {
       const project = await model.Project.findOne({ where: { id: parseInt(req.params.projectId) }});
 

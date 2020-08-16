@@ -3,6 +3,7 @@ html, body, #root {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: .95rem;
   background: #1F2024;
+  color: white;
 }
 
 .brand-logo {
@@ -40,13 +41,33 @@ p {
   -ms-flex-pack: center;
   justify-content: center;
   border-radius: 6px;
-  background-color: #751980;
-  box-shadow: 0 10px 20px 3px rgba(82, 104, 206, 0.15);
+  background-color: rgba(83, 87, 102, 0.6);
+  box-shadow: 0 10px 20px 3px rgba(82, 104, 206, 0.15) !important;
   -webkit-transition: all 600ms ease;
   transition: all 600ms ease;
   color: #fff;
   font-size: 16px;
   cursor: pointer;
+}
+
+.dark-input {
+  border: 1px solid rgba(83, 87, 102, 0.31) !important;
+  box-sizing: border-box;
+  border-radius: 12px !important;
+  box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.2) !important;
+  background-color: #1F2024 !important;
+}
+
+.light-input, div.DraftEditor-root {
+  border: 1px solid rgba(83, 87, 102, 0.31) !important;
+  box-sizing: border-box !important;
+  border-radius: 12px !important;
+  background-color: #535766 !important;
+  box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+div.DraftEditor-root {
+  overflow: hidden !important;
 }
 
 .component-root, .root {
@@ -79,19 +100,19 @@ p {
 
 .btn-primary {
   color: #fff;
-  background-color: #751980 !important;
-  border-color: #751980 !important;
+  background-color: rgba(83, 87, 102, 0.6) !important;
+  border-color: rgba(82, 104, 206, 0.15) !important;
   cursor: pointer;
-  min-width: 150px;
+  min-width: 100px;
 }
 
 .btn-primary:hover {
-  background-color: #d3a7ff !important;
-  border-color: #d3a7ff !important;
+  background-color: white !important;
+  border-color: white !important;
   -webkit-transform: scale(1.03);
   -ms-transform: scale(1.03);
   transform: scale(1.03);
-  color: #fff;
+  color: #1F2024 !important;
   cursor: pointer;
 }
 

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Redux from 'redux';
-import { Container, Row, Col, Tabs, Tab, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import './LiveCollab.css';
 import io from 'socket.io-client';
 import { receivePresentation }  from '../actions/presentationActions';
@@ -248,16 +248,6 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
   render() {
     let shareLinkAttend = process.env.REACT_APP_BASE_URL + '/prezoo-live/' + this.props.guid;
 
-    let slidePreview = null;
-    // Show a preview if we are not at the end
-    if (this.state.project && this.props.presentation.slideNumber < this.state.project.Slides.length - 1) {
-      slidePreview = (
-        <img
-          src={process.env.REACT_APP_ASSET_URL + this.state.project.Slides[this.props.presentation.slideNumber + 1].fileName} alt="Next Slide" className="slide-show-img-preview"
-        />
-      )
-    }
-
     return (
       <div className="component-root mt-3">
         <Container>
@@ -287,9 +277,6 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
                 <Col md="6" className="text-center">
                   <video className="host-camera" playsInline autoPlay muted></video>
                 </Col>
-                {/* <Col md="6" className="text-center">
-                  {slidePreview}
-                </Col> */}
               </Row>
               <Row>
                 <Col md="12" className="prezooBorder">

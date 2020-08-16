@@ -70,7 +70,7 @@ class App extends Component {
           <Route exact path="/prezoo-live/collaborator/:guid" render={( {match}: ChildComponentProps) => (
             <><AppNav /><LiveCollab guid={match.params.guid} /></> )} />
           <Route exact path="/prezoo-live/:guid" render={( {match}: ChildComponentProps) => (
-            <><AppNav /><Attendee guid={match.params.guid} /></> )} />
+            <><Attendee guid={match.params.guid} /></> )} />
         </Switch>
       </Router>
     );

@@ -3,8 +3,32 @@
   font-size: 13px;
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  cursor: pointer;
   padding: 3px;
   width: 60px;
   margin-left: 5px;
+  color: #fff;
+  background-color: rgba(83, 87, 102, 0.6) !important;
+  border-color: rgba(82, 104, 206, 0.15) !important;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-radius: 6px;
+  box-shadow: 0 10px 20px 3px rgba(82, 104, 206, 0.15);
+  -webkit-transition: all 100ms ease;
+  transition: all 100ms ease;
+  cursor: pointer;
+}
+
+.copyText:hover {
+  background-color: white !important;
+  border-color: white !important;
+  -webkit-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  transform: scale(1.03);
+  color: #1F2024 !important;
+  cursor: pointer;
 }

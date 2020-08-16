@@ -1,5 +1,5 @@
 .carouselWrapper {
-  /* Height of navbar is 40px */
+  /* Height of navbar is 70px */
   height: calc(100vh - 70px);
   height: -o-calc(100vh - 70px); /* opera */
   height: -webkit-calc(100vh - 70px); /* google, safari */
@@ -7,6 +7,27 @@
 }
 .carouselWrapper img {
   height: 100%;
+}
+
+.prez-box-react {
+  background: rgba(83, 87, 102, 0.6);
+  backdrop-filter: blur(40px);
+  color: white;
+  padding: 5px;
+  font-size: 20px;
+  line-height: 50px;
+  width: 60px;
+  height: 60px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-transition: all 200ms ease;
+  transition: all 200ms ease;
+}
+
+.prez-box-react:hover {
+  background: rgba(0, 0, 0, 1);
 }
 
 #full-screen-target:fullscreen {
@@ -19,4 +40,11 @@
   top: 0;
   right: 0;
   width: 200px !important;
+}
+
+.host-camera-nav {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
 }

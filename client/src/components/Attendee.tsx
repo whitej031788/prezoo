@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Redux from 'redux';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Navbar, Nav } from 'react-bootstrap';
 import './Attendee.css';
 import io from 'socket.io-client';
 import { receivePresentation }  from '../actions/presentationActions';
@@ -16,6 +16,7 @@ import { receiveUser } from '../actions/userActions';
 import ProjectService from '../services/projectService';
 import StorageService from '../services/storageService';
 import { Editor, EditorState } from 'draft-js';
+import CopyText from './shared/CopyText';
 
 // TypeScript, define the properties and state we expect passed to this component
 interface IAttendeeProps {
@@ -66,7 +67,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     };
 
     this.joinRoom = this.joinRoom.bind(this);
-    this.raiseHand = this.raiseHand.bind(this);
+    this.sendReaction = this.sendReaction.bind(this);
     this.onEditorChange = this.onEditorChange.bind(this);
     this.submitQuestion = this.submitQuestion.bind(this);
   }
@@ -139,12 +140,12 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     });
   }
 
-  raiseHand() {
+  sendReaction(reaction: string) {
     let self = this;
 
     this.setState({handLoading: true});
     if (this.state.socket) {
-      let message = "✋ Raised hand ✋";
+      let message = "Reaction: " + reaction;
       this.state.socket.emit('chatMessage', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: message });
       setTimeout(function(){ self.setState({handLoading: false}); }, 3000);
     }
@@ -269,23 +270,47 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     const username = this.props.user.userName;
     let appliedClass = username ? "" : "vertical-center";
     let fullScreenClass = this.state.isFullScreen ? "currently-full-screen" : "";
-    let videoJsx = (<video className="host-camera" style={{width: '70%', height: 'auto'}} playsInline autoPlay muted></video>);
+    let videoJsx = (<video className="host-camera" style={{width: '240px', height: 'auto'}} playsInline autoPlay muted></video>);
     let questionJsx = (
       <>
-        <Editor placeholder={'Submit a question'} editorState={this.state.question} onChange={this.onEditorChange} />
+        <Editor placeholder={'Post question or comment'} editorState={this.state.question} onChange={this.onEditorChange} />
         <Button onClick={this.submitQuestion} type="button" className="w-100 mt-2 mb-2">Submit Question</Button>
-        <Col md="12" className="alert-success mt-2">{this.state.successMessage}</Col>
+        {this.state.successMessage && (<Col md="12" className="mt-2 prez-box">{this.state.successMessage}</Col>)}
       </>
     );
+
+    let reactionText = (<span>&#10003;</span>);
+
+    let reactionsJsx = (
+      <table className="m-auto">
+        <tr>
+          <td>
+            <div className="prez-box-react" onClick={() => this.sendReaction('🤚')}><span aria-label="Raise Hand" role="img">🤚</span></div>
+          </td>
+          <td>
+            <div className="prez-box-react"><span aria-label="Clap" role="img">👏</span></div>
+          </td>
+          <td>
+            <div className="prez-box-react"><span aria-label="Confused" role="img">🤔</span></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div className="prez-box-react"><span aria-label="Bored" role="img">😴</span></div>
+          </td>
+          <td>
+            <div className="prez-box-react"><span aria-label="Boo" role="img">👎</span></div>
+          </td>
+          <td>
+            <div className="prez-box-react"><span aria-label="Unicorn" role="img">🦄</span></div>
+          </td>
+        </tr>
+      </table>
+    )
 
     let enableSettings = {
       enableQuestions: this.state.projectPresentation && this.state.projectPresentation.enableQuestions,
       enableReactions: this.state.projectPresentation && this.state.projectPresentation.enableReactions
-    }
-
-    let handText = (<span>Raise your hand</span>);
-    if (this.state.handLoading) {
-      handText = (<span>&#10003;</span>);
     }
 
     const joinUser = !username ? (
@@ -304,7 +329,12 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     ) : null;
     const slideShow = username ? (
       <Row id="full-screen-target">
-        <Col md="9">
+        <Col md="3" className="text-center">
+          {(!this.state.isFullScreen && enableSettings.enableReactions) && reactionsJsx}
+          {(!this.state.isFullScreen && enableSettings.enableQuestions) && questionJsx}
+          {!this.state.isFullScreen && (<Button onClick={this.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
+        </Col>
+        <Col md="9" className="text-left">
           <SlideShow 
             slideNumber={this.props.presentation.slideNumber} 
             project={this.state.project} 
@@ -314,25 +344,43 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
             goFullScreen={this.goFullScreen}
           />
         </Col>
-        <Col md="3" className="text-center">
-          {videoJsx}
-          {enableSettings.enableReactions && (<Button onClick={this.raiseHand} type="button" className="w-100 mt-2 mb-2">{handText}</Button>)}
-          {(!this.state.isFullScreen && enableSettings.enableQuestions) && questionJsx}
-          {!this.state.isFullScreen && (<Button onClick={this.goFullScreen} className="mr-1 mb-1" style={{display: 'inline', position: 'absolute', bottom: '0', right: '0'}} type="button">Full screen &gt;</Button>)}
-        </Col>
+
       </Row>
 
     ) : null;
+
+    let shareLinkAttend = process.env.REACT_APP_BASE_URL + '/prezoo-live/' + this.props.guid;
+
     return (
       <div className={"component-root " + appliedClass}>
         <Container fluid>
           {this.state.project && (
-          <Row>
-            <Col md="12" className={"text-center " + fullScreenClass}>
-              {joinUser}
-              {slideShow}
-            </Col>
-          </Row>
+          <div>
+            <Navbar className="prez-back">
+              <Nav>
+                <Nav.Item>
+                  <img src="/images/new-logo.png" alt="Prezoo" className="brand-logo mr-3" />
+                </Nav.Item>
+              </Nav>
+              <Nav>
+                <Form.Control className="dark-input" type="text" name="inviteLink" value={shareLinkAttend} disabled />
+              </Nav>
+              <Nav>
+                <CopyText theText={shareLinkAttend} />
+              </Nav>
+              <Nav className="ml-auto text-right host-camera-nav">
+                <Nav.Item>
+                  {videoJsx}
+                </Nav.Item>
+              </Nav>
+            </Navbar>
+            <Row>
+              <Col md="12" className={"text-center " + fullScreenClass}>
+                {joinUser}
+                {slideShow}
+              </Col>
+            </Row>
+          </div>
           )}
         </Container>
       </div>

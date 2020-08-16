@@ -103,14 +103,14 @@ class HomeComponent extends Component<IHomeProps, IHomeState> {
             </Col>
           </Container>
         </Row>
-        <div style={{width: '250px', position: 'absolute', right: '0px', top: '300px'}} className="hide-mobile">
+        <div style={{width: '220px', position: 'absolute', right: '0px', top: '300px'}} className="hide-mobile">
           <div className="prez-box"><div className="sub-head">Carlos</div><span>Would maybe change the background pic.</span></div>
-          <div className="prez-box"><div className="sub-head">Anon Zebra</div><span>👏</span></div>
+          <div className="prez-box"><div className="sub-head">Anon Zebra</div><span aria-label="Clap" role="img">👏</span></div>
           <div className="prez-box"><div className="sub-head">Juan</div><span>This slide looks awesome! Good Job :)</span></div>
         </div>
-        <img id="top-left-home-img" src="/images/teemu-paananen-bzdhc5b3Bxs-unsplash.jpg" className="hide-mobile" />
-        <img id="mid-right-home-img" src="/images/marcos-luiz-photograph-R6xx6fnvPT8-unsplash.jpg" className="hide-mobile" />
-        <img id="bot-left-mid-home-img" src="/images/home-color.png" className="hide-mobile" />
+        <img id="top-left-home-img" alt="Presentation" src="/images/teemu-paananen-bzdhc5b3Bxs-unsplash.jpg" className="hide-mobile" />
+        <img id="mid-right-home-img" alt="Hand Raise" src="/images/marcos-luiz-photograph-R6xx6fnvPT8-unsplash.jpg" className="hide-mobile" />
+        <img id="bot-left-mid-home-img" alt="Prezoo" src="/images/home-color.png" className="hide-mobile" />
       </Container>
     );
   }

@@ -68,9 +68,9 @@
   }
   #bot-left-mid-home-img {
     position: fixed;
-    width: 327px;
+    width: 300px;
     height: auto;
-    left: 100px;
+    left: 75px;
     bottom: 0px;
   }
 }

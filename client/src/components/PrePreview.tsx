@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 import './PrePreview.css';
 import { IProject } from '../interfaces/IProject';
 import { IProjectPresentation } from '../interfaces/IProjectPresentation';

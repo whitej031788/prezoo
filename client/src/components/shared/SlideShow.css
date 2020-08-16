@@ -1,14 +1,12 @@
 .carouselWrapper {
-  /* Height of navbar is 40px */
-  height: calc(100vh - 40px);
-  height: -o-calc(100vh - 40px); /* opera */
-  height: -webkit-calc(100vh - 40px); /* google, safari */
-  height: -moz-calc(100vh - 40px); /* firefox */
+  /* Height of navbar is 40px, 100px for bottom */
+  height: calc(100vh - 140px);
+  height: -o-calc(100vh - 140px); /* opera */
+  height: -webkit-calc(100vh - 140px); /* google, safari */
+  height: -moz-calc(100vh - 140px); /* firefox */
   position: relative;
   padding: 10px;
-  border: .2rem solid #ececec;
-  background-color: #ececec;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-right: 0;
   margin-left: 0;
   color: #212529;
@@ -17,6 +15,7 @@
 .slide-show-img {
   height: 100%;
   width: auto;
+  border-radius: 12px;
 }
 
 .carousel-control-prev-icon,
@@ -44,12 +43,16 @@
   height: 100%;
 }
 
+.carousel-inner {
+  border-radius: 12px;
+}
+
 .prezoo-carousel-indicators {
   margin: 0 0 0;
   overflow: auto;
   white-space: nowrap;
   width: 100%;
-  background-color: #ececec;
+  background-color: rgba(83, 87, 102, 1);
   padding: 5px;
   border-radius: 5px;
   text-align: left;
