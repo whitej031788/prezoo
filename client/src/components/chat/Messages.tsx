@@ -15,13 +15,9 @@ class Messages extends Component<IMessagesProps,IMessagesState > {
 
     const chatMessages = messages.map((chat, key) =>
       <li style={styles.li} key={key}>
-        <p style={styles.timestampText}>
-          {moment(chat.timestamp).format('D.M.YYYY HH:mm:ss')}
-        </p>
-
-        <p style={styles.messageText}>
-          <b>{chat.sender}</b>: {chat.message}
-        </p>
+        <div style={styles.div} className="prez-box">
+          <div style={styles.subHead} className="sub-head">{chat.sender} - {moment(chat.timestamp).format('D.M.YYYY HH:mm:ss')}</div> <div style={{display: 'inline', position: 'relative', top: '-10px'}}>{chat.message}</div>
+        </div>
       </li>
     );
 

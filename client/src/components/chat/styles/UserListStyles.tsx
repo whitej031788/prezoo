@@ -19,7 +19,7 @@ export default {
     padding: '0px 0px 0px 10px'
   },
   li: {
-    color: 'black',
+    color: 'white',
     margin: 0,
     padding: 0
   },

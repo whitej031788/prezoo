@@ -147,7 +147,7 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
     if (this.state.socket) {
       let message = "Reaction: " + reaction;
       this.state.socket.emit('chatMessage', { timestamp: new Date(), sender: this.props.user.userName + ' - Guest', message: message });
-      setTimeout(function(){ self.setState({handLoading: false}); }, 3000);
+      setTimeout(function(){ self.setState({handLoading: false}); }, 2000);
     }
   }
 
@@ -285,24 +285,42 @@ class Attendee extends Component<IAttendeeProps, IAttendeeState> {
       <table className="m-auto">
         <tr>
           <td>
-            <div className="prez-box-react" onClick={() => this.sendReaction('🤚')}><span aria-label="Raise Hand" role="img">🤚</span></div>
+            <div className="prez-box-react" onClick={() => this.sendReaction('🤚')}>
+              {this.state.handLoading && reactionText}
+              {!this.state.handLoading && <span aria-label="Raise Hand" role="img">🤚</span>}
+            </div>
           </td>
           <td>
-            <div className="prez-box-react"><span aria-label="Clap" role="img">👏</span></div>
+            <div className="prez-box-react" onClick={() => this.sendReaction('👏')}>
+              {this.state.handLoading && reactionText}
+              {!this.state.handLoading && <span aria-label="Raise Hand" role="img">👏</span>}
+            </div>
           </td>
           <td>
-            <div className="prez-box-react"><span aria-label="Confused" role="img">🤔</span></div>
+            <div className="prez-box-react" onClick={() => this.sendReaction('🤔')}>
+              {this.state.handLoading && reactionText}
+              {!this.state.handLoading && <span aria-label="Raise Hand" role="img">🤔</span>}
+            </div>
           </td>
         </tr>
         <tr>
           <td>
-            <div className="prez-box-react"><span aria-label="Bored" role="img">😴</span></div>
+            <div className="prez-box-react" onClick={() => this.sendReaction('😴')}>
+              {this.state.handLoading && reactionText}
+              {!this.state.handLoading && <span aria-label="Raise Hand" role="img">😴</span>}
+            </div>
           </td>
           <td>
-            <div className="prez-box-react"><span aria-label="Boo" role="img">👎</span></div>
+            <div className="prez-box-react" onClick={() => this.sendReaction('👎')}>
+              {this.state.handLoading && reactionText}
+              {!this.state.handLoading && <span aria-label="Raise Hand" role="img">👎</span>}
+            </div>
           </td>
           <td>
-            <div className="prez-box-react"><span aria-label="Unicorn" role="img">🦄</span></div>
+            <div className="prez-box-react" onClick={() => this.sendReaction('🦄')}>
+              {this.state.handLoading && reactionText}
+              {!this.state.handLoading && <span aria-label="Raise Hand" role="img">🦄</span>}
+            </div>
           </td>
         </tr>
       </table>

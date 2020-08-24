@@ -21,5 +21,14 @@ export default {
     margin: 0,
     padding: 0,
     fontSize: 13
+  },
+  div: {
+    paddingTop: '0px',
+    paddingBottom: '0px',
+    marginTop: '15px',
+    marginBottom: '0px'
+  },
+  subHead: {
+    maxWidth: '80%'
   }
 };
