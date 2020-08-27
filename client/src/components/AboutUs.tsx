@@ -22,6 +22,7 @@ class AboutUs extends Component {
             <Col md={{span: 10, offset: 1}}>
               <h3 className="main-title">The Home of Finished Work</h3>
             </Col>
+            <br></br>
             <Col md={{span: 12, offset: 0}} xs="12">
                 <p className="text-center sub-text">Finished work should be cherished and remembered, not dropped into the abyss that is Google Drive or Dropbox or even slack. We want to be the number one platform for delivering and storing finished work. Unlike other presentations tools focusing heavily on creation, we're all about delivery and impact, including what happens after, so individuals and companies alike can strive for continuous improvement.</p>
                 <p className="text-center sub-text">While we're in Beta, we plan to collect as much feedback as possible to inform how we help you deliver, and when we have that down we're planning to launch logins and the ability to save your presentations for future use and have a variety of ideas around discussion boards, product feedback loops and training/onboarding... but we need you to tell us what YOU want. Give us a test run or deliver your first project today using Prezoo and let us know what you think!</p>
