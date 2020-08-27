@@ -33,16 +33,10 @@ const HomeNavRoute = ({ component: Component, ...rest }: any) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <Link to="/use-cases">Use Cases</Link>
+            <Link to="/use-cases">How It Works</Link>
           </Nav>
           <Nav>
             <Link to="/about-us">About Us</Link>
-          </Nav>
-          <Nav>
-            <Link to="/pricing">Pricing</Link>
-          </Nav>
-          <Nav>
-            <Link to="/white-label">White Label</Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
