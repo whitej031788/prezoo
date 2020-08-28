@@ -20,6 +20,14 @@
 .main-logo-home {
   width: 50px;
   height: auto;
+
+}
+
+.use-case-images {
+  width: auto;
+  height: 200px;
+  border-color: #ffffff;
+  border-style: solid;
 }
 
 .white-bold-text {
@@ -80,6 +88,10 @@
     display: none;
   }
   #bot-left-mid-home-img {
+    display: none;
+  }
+
+  .use-case-images {
     display: none;
   }
 }

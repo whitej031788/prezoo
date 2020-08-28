@@ -148,14 +148,6 @@ class PreUploadComponent extends Component<IPreUploadProps, IPreUploadState> {
                     Please provide a valid email
                   </Form.Control.Feedback>
                 </Form.Group>
-              
-                <div>Share this link: 
-                  <a className="ml-1" onClick={(e) => e.preventDefault()} href={shareLinkCollab}>Link</a>
-                  <CopyText theText={shareLinkCollab} />
-                </div>
-                <div>
-                  <p>and code: <b>{this.state.collabCode}</b></p>
-                </div>
                 <Row>
                   <Col md="6">
                     <ButtonLoader name="preview" text="Preview" isLoading={this.state.isLoading} isSubmit={true} />
