@@ -286,9 +286,7 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
               </Row>
               <Row>
                 <Col md="12" className="mt-5 mb-5 text-center">
-                <Link to={{ pathname: "https://prezoo.typeform.com/to/n0IcdPjT" }} target="_blank">
-                  <Button type="button">Wrap Up</Button>
-                </Link>
+                <a href="https://prezoo.typeform.com/to/n0IcdPjT"><Button type="button">Wrap Up</Button></a>
                 </Col>
               </Row>
             </Col>
