@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Redux from 'redux';
 import { Container, Row, Col, Button } from 'react-bootstrap';
+import {Link} from 'react-router-dom';
 import './LiveCollab.css';
 import io from 'socket.io-client';
 import { receivePresentation }  from '../actions/presentationActions';
@@ -285,7 +286,9 @@ class LiveCollab extends Component<ILiveCollabProps, ILiveCollabState> {
               </Row>
               <Row>
                 <Col md="12" className="mt-5 mb-5 text-center">
+                <Link to={{ pathname: "https://prezoo.typeform.com/to/n0IcdPjT" }} target="_blank">
                   <Button type="button">Wrap Up</Button>
+                </Link>
                 </Col>
               </Row>
             </Col>
