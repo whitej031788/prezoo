@@ -18,6 +18,21 @@ class UseCases extends Component {
               <h2 className="text-center">For Presenters</h2>
               <br></br>
               <p className="text-center sub-text">1. Upload your finished project in pdf format</p>
+              <Col md="12" className="text-center mb-2"><img src="/images/upload-example.png" alt="Upload" className="use-case-images" /></Col>
+              <br></br>
+              <p className="text-center sub-text">2. Title your presentation and generate shareable URLs links for your viewers and co-presenters.</p>
+              <Col md="12" className="text-center mb-2"><img src="/images/project-example.png" alt="Upload" className="use-case-images" /></Col>
+              <br></br>
+              <p className="text-center sub-text">3. Deliver your presentation, live to your audience!</p>
+              <Col md="12" className="text-center mb-2"><img src="/images/live-demo.png" alt="Upload" className="use-case-images" /></Col>
+              <br></br>
+            </Col>
+            <Col md={{span: 10, offset: 1}}>
+              <br></br>
+              <h2 className="text-center">For Viewers</h2>
+              <br></br>
+              <p className="text-center sub-text">1. Join host URL (thats' it!!)</p>
+              <Col md="12" className="text-center mb-2"><img src="/images/viewer-example.png" alt="Upload" className="use-case-images" /></Col>
             </Col>
           </Container>
         </Row>
